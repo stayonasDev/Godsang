@@ -35,3 +35,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+#환경 설정 파일
+application.yml
+.env
+
+#QueryDSL
+target/generated-sources/
