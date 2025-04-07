@@ -24,7 +24,9 @@ public class QIntakeHistory extends EntityPathBase<IntakeHistory> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final DateTimePath<java.time.LocalDateTime> intakeType = createDateTime("intakeType", java.time.LocalDateTime.class);
+    public final DatePath<java.time.LocalDate> intakeDate = createDate("intakeDate", java.time.LocalDate.class);
+
+    public final ListPath<IntakeFood, QIntakeFood> intakeFoods = this.<IntakeFood, QIntakeFood>createList("intakeFoods", IntakeFood.class, QIntakeFood.class, PathInits.DIRECT2);
 
     public final EnumPath<MealType> mealType = createEnum("mealType", MealType.class);
 

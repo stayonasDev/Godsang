@@ -23,8 +23,6 @@ public class QFood extends EntityPathBase<Food> {
 
     public final NumberPath<Double> cholest = createNumber("cholest", Double.class);
 
-    public final NumberPath<Double> gram = createNumber("gram", Double.class);
-
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final NumberPath<Integer> kal = createNumber("kal", Integer.class);
@@ -33,11 +31,19 @@ public class QFood extends EntityPathBase<Food> {
 
     public final NumberPath<Double> pat = createNumber("pat", Double.class);
 
+    public final NumberPath<Double> polyFat = createNumber("polyFat", Double.class);
+
     public final NumberPath<Double> protein = createNumber("protein", Double.class);
+
+    public final NumberPath<Double> saturatedFat = createNumber("saturatedFat", Double.class);
 
     public final NumberPath<Double> sodium = createNumber("sodium", Double.class);
 
     public final NumberPath<Double> sugar = createNumber("sugar", Double.class);
+
+    public final NumberPath<Double> transFat = createNumber("transFat", Double.class);
+
+    public final NumberPath<Double> unsaturatedFat = createNumber("unsaturatedFat", Double.class);
 
     public QFood(String variable) {
         super(Food.class, forVariable(variable));

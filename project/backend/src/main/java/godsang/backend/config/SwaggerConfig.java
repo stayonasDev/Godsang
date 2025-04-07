@@ -27,10 +27,17 @@ public class SwaggerConfig {
                 .components(components);
     }
 
+/*    @Bean
+    public OpenAPI openAPI() {
+        return new OpenAPI()
+                .components(new Components())
+                .info(apiInfo());
+    }*/
+
     private Info apiInfo() {
         return new Info()
                 .title("Restful API")
-                .description("소통을 위한 API 명세서")
+                .description("갓생 프로젝트 API 명세서")
                 .version("1.0.0");
     }
 }
