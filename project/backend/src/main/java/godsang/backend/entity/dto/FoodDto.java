@@ -2,6 +2,8 @@ package godsang.backend.entity.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 import godsang.backend.entity.Food;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -15,7 +17,8 @@ public class FoodDto {
 
     private Long id;
 
-    @NotNull
+    @NotBlank
+    @NotEmpty
     private String name;
 
     @NotNull

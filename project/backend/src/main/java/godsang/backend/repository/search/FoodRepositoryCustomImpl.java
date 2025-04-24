@@ -54,7 +54,7 @@ public class FoodRepositoryCustomImpl implements FoodRepositoryCustom{
                 .select(new QFoodDto(food))
                 .from(food)
                 .where(food.name.like("%" + foodName + "%"))
-                .orderBy(food.name.desc())
+                .orderBy(food.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

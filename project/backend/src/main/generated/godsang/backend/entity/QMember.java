@@ -31,13 +31,13 @@ public class QMember extends EntityPathBase<Member> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> lastModifiedDate = _super.lastModifiedDate;
 
-    public final StringPath memberId = createString("memberId");
-
     public final StringPath name = createString("name");
 
     public final StringPath password = createString("password");
 
-    public final StringPath phone_number = createString("phone_number");
+    public final StringPath phoneNumber = createString("phoneNumber");
+
+    public final StringPath userId = createString("userId");
 
     public QMember(String variable) {
         super(Member.class, forVariable(variable));

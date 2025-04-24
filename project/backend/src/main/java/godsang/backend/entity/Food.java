@@ -1,5 +1,6 @@
 package godsang.backend.entity;
 
+import godsang.backend.entity.dto.FoodDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,10 +10,11 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @ToString
+@EqualsAndHashCode
 public class Food {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fo_id")
+    @Column(name = "food_id")
     private Long id;
 
     private String name;
@@ -27,4 +29,19 @@ public class Food {
     private double sodium;
     private double cholest;
     private double sugar;
+
+    public void foodUpdate(FoodDto dto) {
+        this.name = dto.getName();
+        this.kal = dto.getKal();
+        this.carb = dto.getCarb();
+        this.protein = dto.getProtein();
+        this.pat = dto.getPat();
+        this.saturatedFat = dto.getSaturatedFat();
+        this.transFat = dto.getTransFat();
+        this.polyFat = dto.getPolyFat();
+        this.unsaturatedFat = dto.getUnsaturatedFat();
+        this.sodium = dto.getSodium();
+        this.cholest = dto.getCholest();
+        this.sugar = dto.getSugar();
+    }
 }

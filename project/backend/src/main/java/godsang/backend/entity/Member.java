@@ -10,16 +10,18 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @ToString
+@Getter
 public class Member extends BaseTimeEntity{
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "m_id")
     private Long id;
 
-    @Column(name = "member_id")
-    private String memberId;
+    @Column(name = "user_id")
+    private String userId;
     private String password;
     private String email;
-    private String phone_number;
+    @Column(name = "phone_number")
+    private String phoneNumber;
     private String name;
 
 }

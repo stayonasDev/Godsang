@@ -1,10 +1,14 @@
 package godsang.backend.service;
 
 import godsang.backend.entity.Food;
+import godsang.backend.entity.IntakeFood;
+import godsang.backend.entity.IntakeHistory;
 import godsang.backend.entity.dto.FoodDto;
 import godsang.backend.entity.dto.PageRequestDto;
 import godsang.backend.exception.EntityNotFoundException;
 import godsang.backend.repository.FoodRepository;
+import godsang.backend.repository.IntakeFoodRepository;
+import godsang.backend.repository.IntakeHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -12,8 +16,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.swing.text.html.Option;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -36,12 +45,21 @@ public class FoodService {
     public Page<FoodDto> foodList(String foodName, PageRequestDto pageDto) {
         Optional<Food> foodFind = foodRepository.findFirstByNameContaining(foodName);
 
-        if(foodFind.isEmpty())
-            throw new EntityNotFoundException("해당 " + foodName + " 이라는 음식을 찾을 수 없습니다.");
+        Food food = foodFind.orElseThrow(() ->
+                new EntityNotFoundException("해당 " + foodName + "  음식을 찾을 수 없습니다."));
 
         Sort sort = Sort.by("fo_id").descending();
         Pageable pageable = pageDto.getPageable(sort);
         return foodRepository.searchOneFoodName(pageable, foodName);
+    }
+
+    @Transactional
+    public FoodDto foodEdit(FoodDto foodDto) {
+        Optional<Food> foodFind = foodRepository.findById(foodDto.getId());
+        Food food = foodFind.orElseThrow(() ->
+                new EntityNotFoundException("Food Entity " + foodDto.getId() + " Not Found"));
+        food.foodUpdate(foodDto);
+        return new FoodDto(food);
     }
 
 }

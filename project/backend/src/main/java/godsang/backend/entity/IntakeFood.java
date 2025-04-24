@@ -1,17 +1,18 @@
 package godsang.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.ToString;
+import lombok.*;
 
 @Entity
 @Table(name = "intake_food")
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "amount"})
+@AllArgsConstructor
 public class IntakeFood {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "in_id")
+    @Column(name = "intake_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -19,7 +20,7 @@ public class IntakeFood {
     private IntakeHistory intakeHistory;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fo_id")
+    @JoinColumn(name = "food_id")
     private Food food;
 
     private int amount;

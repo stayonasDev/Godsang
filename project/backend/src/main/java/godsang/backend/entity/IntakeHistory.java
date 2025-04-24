@@ -1,8 +1,9 @@
 package godsang.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.ToString;
+import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,6 +14,9 @@ import java.util.List;
 @Table(name = "intake_history")
 @Builder
 @ToString(of = {"id", "mealType", "intakeDate"})
+@NoArgsConstructor(access =  AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Getter
 public class IntakeHistory {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +24,7 @@ public class IntakeHistory {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "m_id")
+    @JoinColumn(name = "user_id")
     private Member member;
 
     @Enumerated(value = EnumType.STRING)
@@ -28,13 +32,17 @@ public class IntakeHistory {
     private MealType mealType;
 
     @Column(name = "intake_date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate intakeDate;
 
+    //@Builder.Default 필수
     @OneToMany(mappedBy = "intakeHistory", cascade = CascadeType.ALL)
+    @Builder.Default
+    @JsonIgnore
     private List<IntakeFood> intakeFoods = new ArrayList<>();
 
     public void addIntakeFood(IntakeFood intakeFood) {
-        intakeFoods.add(intakeFood);
+        this.intakeFoods.add(intakeFood);
         intakeFood.addIntakeHistory(this);
     }
 }
