@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Journal</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#4f46e5',secondary:'#6366f1'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+        }
+        .food-item {
+            transition: all 0.3s ease;
+        }
+        .food-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        .custom-checkbox {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border: 2px solid #d1d5db;
+            border-radius: 4px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .custom-checkbox.checked {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
+        }
+        .custom-checkbox.checked::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 2px;
+            width: 6px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        .custom-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        .custom-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e5e7eb;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #4f46e5;
+        }
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background-color: #10b981;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .toast.error {
+            background-color: #ef4444;
+        }
+        .toast.warning {
+            background-color: #f59e0b;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+        }
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+        .nutrition-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .confirm-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 60;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .confirm-dialog.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .confirm-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+        }
+        .confirm-dialog.show .confirm-content {
+            transform: translateY(0);
+        }
+        .details-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .details-panel.show {
+            max-height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-white shadow-sm py-4 px-6">
+            <div class="max-w-6xl mx-auto flex justify-between items-center">
+                <h1 class="text-2xl font-semibold text-gray-800">Food Journal</h1>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="date" value="2025-04-29" class="bg-gray-50 border border-gray-300 text-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                    </div>
+                    <button id="addFoodBtn" class="bg-primary text-white px-4 py-2 flex items-center space-x-2 !rounded-button hover:bg-primary/90 transition-colors whitespace-nowrap">
+                        <div class="w-5 h-5 flex items-center justify-center">
+                            <i class="ri-add-line"></i>
+                        </div>
+                        <span>Add New Food</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow py-8 px-6">
+            <div class="max-w-4xl mx-auto">
+                <!-- Summary Section -->
+                <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-2 md:mb-0">Today's Summary</h2>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm text-gray-500">April 29, 2025</span>
+                            <div class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600 cursor-pointer">
+                                <i class="ri-calendar-line"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Calories</span>
+                                <div class="w-6 h-6 flex items-center justify-center text-blue-500">
+                                    <i class="ri-fire-line"></i>
+                                </div>
+                            </div>
+                            <p class="text-2xl font-semibold text-gray-800 mt-2">1,842</p>
+                            <p class="text-xs text-gray-500 mt-1">Goal: 2,100</p>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Protein</span>
+                                <div class="w-6 h-6 flex items-center justify-center text-green-500">
+                                    <i class="ri-seedling-line"></i>
+                                </div>
+                            </div>
+                            <p class="text-2xl font-semibold text-gray-800 mt-2">82g</p>
+                            <p class="text-xs text-gray-500 mt-1">Goal: 120g</p>
+                        </div>
+                        <div class="bg-yellow-50 rounded-lg p-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Carbs</span>
+                                <div class="w-6 h-6 flex items-center justify-center text-yellow-500">
+                                    <i class="ri-bread-line"></i>
+                                </div>
+                            </div>
+                            <p class="text-2xl font-semibold text-gray-800 mt-2">215g</p>
+                            <p class="text-xs text-gray-500 mt-1">Goal: 250g</p>
+                        </div>
+                        <div class="bg-red-50 rounded-lg p-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Fats</span>
+                                <div class="w-6 h-6 flex items-center justify-center text-red-500">
+                                    <i class="ri-drop-line"></i>
+                                </div>
+                            </div>
+                            <p class="text-2xl font-semibold text-gray-800 mt-2">65g</p>
+                            <p class="text-xs text-gray-500 mt-1">Goal: 70g</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Food List -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-semibold text-gray-800">Food Entries</h2>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <div class="w-5 h-5 flex items-center justify-center text-gray-400">
+                                    <i class="ri-search-line"></i>
+                                </div>
+                            </div>
+                            <input type="text" placeholder="Search foods..." class="bg-gray-50 border border-gray-300 text-gray-700 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+                        </div>
+                    </div>
+
+                    <!-- Meal Sections -->
+                    <div class="space-y-6">
+                        <!-- Breakfast -->
+                        <div>
+                            <div class="flex items-center mb-3">
+                                <div class="w-6 h-6 flex items-center justify-center text-yellow-500 mr-2">
+                                    <i class="ri-sun-line"></i>
+                                </div>
+                                <h3 class="text-lg font-medium text-gray-700">Breakfast</h3>
+                                <span class="text-sm text-gray-500 ml-2">(7:30 AM)</span>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="food-item bg-white border border-gray-100 rounded-lg p-4 shadow-sm">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <div class="flex items-center">
+                                                <h4 class="text-base font-medium text-gray-800">Greek Yogurt with Berries</h4>
+                                                <span class="text-xs text-gray-500 ml-2">7:45 AM</span>
+                                            </div>
+                                            <p class="text-sm text-gray-600 mt-1">1 cup (200g)</p>
+                                            <div class="flex items-center mt-2 space-x-2">
+                                                <span class="nutrition-pill bg-blue-50 text-blue-700">180 cal</span>
+                                                <span class="nutrition-pill bg-green-50 text-green-700">18g protein</span>
+                                                <span class="nutrition-pill bg-yellow-50 text-yellow-700">12g carbs</span>
+                                                <span class="nutrition-pill bg-red-50 text-red-700">5g fat</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button class="toggle-details w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                                                <i class="ri-information-line"></i>
+                                            </button>
+                                            <button class="edit-food w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                                                <i class="ri-edit-line"></i>
+                                            </button>
+                                            <button class="delete-food w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 rounded-full hover:bg-gray-100">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="details-panel mt-3 pt-3 border-t border-gray-100">
+                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                            <div>
+                                                <p class="text-xs text-gray-500">Calories</p>
+                                                <p class="text-sm font-medium">180 kcal</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Protein</p>
+                                                <p class="text-sm font-medium">18g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Carbohydrates</p>
+                                                <p class="text-sm font-medium">12g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Fat</p>
+                                                <p class="text-sm font-medium">5g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Fiber</p>
+                                                <p class="text-sm font-medium">2g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Sugar</p>
+                                                <p class="text-sm font-medium">8g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Sodium</p>
+                                                <p class="text-sm font-medium">65mg</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Calcium</p>
+                                                <p class="text-sm font-medium">240mg</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="food-item bg-white border border-gray-100 rounded-lg p-4 shadow-sm">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <div class="flex items-center">
+                                                <h4 class="text-base font-medium text-gray-800">Whole Grain Toast</h4>
+                                                <span class="text-xs text-gray-500 ml-2">7:50 AM</span>
+                                            </div>
+                                            <p class="text-sm text-gray-600 mt-1">2 slices (70g)</p>
+                                            <div class="flex items-center mt-2 space-x-2">
+                                                <span class="nutrition-pill bg-blue-50 text-blue-700">160 cal</span>
+                                                <span class="nutrition-pill bg-green-50 text-green-700">6g protein</span>
+                                                <span class="nutrition-pill bg-yellow-50 text-yellow-700">30g carbs</span>
+                                                <span class="nutrition-pill bg-red-50 text-red-700">2g fat</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button class="toggle-details w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                                                <i class="ri-information-line"></i>
+                                            </button>
+                                            <button class="edit-food w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                                                <i class="ri-edit-line"></i>
+                                            </button>
+                                            <button class="delete-food w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 rounded-full hover:bg-gray-100">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="details-panel mt-3 pt-3 border-t border-gray-100">
+                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                            <div>
+                                                <p class="text-xs text-gray-500">Calories</p>
+                                                <p class="text-sm font-medium">160 kcal</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Protein</p>
+                                                <p class="text-sm font-medium">6g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Carbohydrates</p>
+                                                <p class="text-sm font-medium">30g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Fat</p>
+                                                <p class="text-sm font-medium">2g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Fiber</p>
+                                                <p class="text-sm font-medium">4g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Sugar</p>
+                                                <p class="text-sm font-medium">2g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Sodium</p>
+                                                <p class="text-sm font-medium">180mg</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Iron</p>
+                                                <p class="text-sm font-medium">1.2mg</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lunch -->
+                        <div>
+                            <div class="flex items-center mb-3">
+                                <div class="w-6 h-6 flex items-center justify-center text-orange-500 mr-2">
+                                    <i class="ri-sun-foggy-line"></i>
+                                </div>
+                                <h3 class="text-lg font-medium text-gray-700">Lunch</h3>
+                                <span class="text-sm text-gray-500 ml-2">(12:30 PM)</span>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="food-item bg-white border border-gray-100 rounded-lg p-4 shadow-sm">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <div class="flex items-center">
+                                                <h4 class="text-base font-medium text-gray-800">Grilled Chicken Salad</h4>
+                                                <span class="text-xs text-gray-500 ml-2">12:45 PM</span>
+                                            </div>
+                                            <p class="text-sm text-gray-600 mt-1">1 bowl (350g)</p>
+                                            <div class="flex items-center mt-2 space-x-2">
+                                                <span class="nutrition-pill bg-blue-50 text-blue-700">320 cal</span>
+                                                <span class="nutrition-pill bg-green-50 text-green-700">35g protein</span>
+                                                <span class="nutrition-pill bg-yellow-50 text-yellow-700">15g carbs</span>
+                                                <span class="nutrition-pill bg-red-50 text-red-700">12g fat</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button class="toggle-details w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                                                <i class="ri-information-line"></i>
+                                            </button>
+                                            <button class="edit-food w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                                                <i class="ri-edit-line"></i>
+                                            </button>
+                                            <button class="delete-food w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 rounded-full hover:bg-gray-100">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="details-panel mt-3 pt-3 border-t border-gray-100">
+                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                            <div>
+                                                <p class="text-xs text-gray-500">Calories</p>
+                                                <p class="text-sm font-medium">320 kcal</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Protein</p>
+                                                <p class="text-sm font-medium">35g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Carbohydrates</p>
+                                                <p class="text-sm font-medium">15g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Fat</p>
+                                                <p class="text-sm font-medium">12g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Fiber</p>
+                                                <p class="text-sm font-medium">5g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Sugar</p>
+                                                <p class="text-sm font-medium">3g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Sodium</p>
+                                                <p class="text-sm font-medium">420mg</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Potassium</p>
+                                                <p class="text-sm font-medium">650mg</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="food-item bg-white border border-gray-100 rounded-lg p-4 shadow-sm">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <div class="flex items-center">
+                                                <h4 class="text-base font-medium text-gray-800">Quinoa Bowl</h4>
+                                                <span class="text-xs text-gray-500 ml-2">1:00 PM</span>
+                                            </div>
+                                            <p class="text-sm text-gray-600 mt-1">1 cup (185g)</p>
+                                            <div class="flex items-center mt-2 space-x-2">
+                                                <span class="nutrition-pill bg-blue-50 text-blue-700">220 cal</span>
+                                                <span class="nutrition-pill bg-green-50 text-green-700">8g protein</span>
+                                                <span class="nutrition-pill bg-yellow-50 text-yellow-700">40g carbs</span>
+                                                <span class="nutrition-pill bg-red-50 text-red-700">4g fat</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button class="toggle-details w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                                                <i class="ri-information-line"></i>
+                                            </button>
+                                            <button class="edit-food w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                                                <i class="ri-edit-line"></i>
+                                            </button>
+                                            <button class="delete-food w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 rounded-full hover:bg-gray-100">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="details-panel mt-3 pt-3 border-t border-gray-100">
+                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                            <div>
+                                                <p class="text-xs text-gray-500">Calories</p>
+                                                <p class="text-sm font-medium">220 kcal</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Protein</p>
+                                                <p class="text-sm font-medium">8g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Carbohydrates</p>
+                                                <p class="text-sm font-medium">40g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Fat</p>
+                                                <p class="text-sm font-medium">4g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Fiber</p>
+                                                <p class="text-sm font-medium">5g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Sugar</p>
+                                                <p class="text-sm font-medium">1g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Sodium</p>
+                                                <p class="text-sm font-medium">15mg</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Iron</p>
+                                                <p class="text-sm font-medium">2.8mg</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dinner -->
+                        <div>
+                            <div class="flex items-center mb-3">
+                                <div class="w-6 h-6 flex items-center justify-center text-indigo-500 mr-2">
+                                    <i class="ri-moon-line"></i>
+                                </div>
+                                <h3 class="text-lg font-medium text-gray-700">Dinner</h3>
+                                <span class="text-sm text-gray-500 ml-2">(7:00 PM)</span>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="food-item bg-white border border-gray-100 rounded-lg p-4 shadow-sm">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <div class="flex items-center">
+                                                <h4 class="text-base font-medium text-gray-800">Salmon with Vegetables</h4>
+                                                <span class="text-xs text-gray-500 ml-2">7:15 PM</span>
+                                            </div>
+                                            <p class="text-sm text-gray-600 mt-1">1 fillet (180g) with side (150g)</p>
+                                            <div class="flex items-center mt-2 space-x-2">
+                                                <span class="nutrition-pill bg-blue-50 text-blue-700">420 cal</span>
+                                                <span class="nutrition-pill bg-green-50 text-green-700">32g protein</span>
+                                                <span class="nutrition-pill bg-yellow-50 text-yellow-700">18g carbs</span>
+                                                <span class="nutrition-pill bg-red-50 text-red-700">24g fat</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button class="toggle-details w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                                                <i class="ri-information-line"></i>
+                                            </button>
+                                            <button class="edit-food w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                                                <i class="ri-edit-line"></i>
+                                            </button>
+                                            <button class="delete-food w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 rounded-full hover:bg-gray-100">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="details-panel mt-3 pt-3 border-t border-gray-100">
+                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                            <div>
+                                                <p class="text-xs text-gray-500">Calories</p>
+                                                <p class="text-sm font-medium">420 kcal</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Protein</p>
+                                                <p class="text-sm font-medium">32g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Carbohydrates</p>
+                                                <p class="text-sm font-medium">18g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Fat</p>
+                                                <p class="text-sm font-medium">24g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Fiber</p>
+                                                <p class="text-sm font-medium">4g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Sugar</p>
+                                                <p class="text-sm font-medium">3g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Sodium</p>
+                                                <p class="text-sm font-medium">320mg</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Omega-3</p>
+                                                <p class="text-sm font-medium">2.5g</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Snacks -->
+                        <div>
+                            <div class="flex items-center mb-3">
+                                <div class="w-6 h-6 flex items-center justify-center text-purple-500 mr-2">
+                                    <i class="ri-cake-line"></i>
+                                </div>
+                                <h3 class="text-lg font-medium text-gray-700">Snacks</h3>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="food-item bg-white border border-gray-100 rounded-lg p-4 shadow-sm">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <div class="flex items-center">
+                                                <h4 class="text-base font-medium text-gray-800">Mixed Nuts</h4>
+                                                <span class="text-xs text-gray-500 ml-2">3:30 PM</span>
+                                            </div>
+                                            <p class="text-sm text-gray-600 mt-1">1 handful (30g)</p>
+                                            <div class="flex items-center mt-2 space-x-2">
+                                                <span class="nutrition-pill bg-blue-50 text-blue-700">180 cal</span>
+                                                <span class="nutrition-pill bg-green-50 text-green-700">6g protein</span>
+                                                <span class="nutrition-pill bg-yellow-50 text-yellow-700">5g carbs</span>
+                                                <span class="nutrition-pill bg-red-50 text-red-700">16g fat</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button class="toggle-details w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                                                <i class="ri-information-line"></i>
+                                            </button>
+                                            <button class="edit-food w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                                                <i class="ri-edit-line"></i>
+                                            </button>
+                                            <button class="delete-food w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 rounded-full hover:bg-gray-100">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="details-panel mt-3 pt-3 border-t border-gray-100">
+                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                            <div>
+                                                <p class="text-xs text-gray-500">Calories</p>
+                                                <p class="text-sm font-medium">180 kcal</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Protein</p>
+                                                <p class="text-sm font-medium">6g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Carbohydrates</p>
+                                                <p class="text-sm font-medium">5g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Fat</p>
+                                                <p class="text-sm font-medium">16g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Fiber</p>
+                                                <p class="text-sm font-medium">3g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Sugar</p>
+                                                <p class="text-sm font-medium">1g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Sodium</p>
+                                                <p class="text-sm font-medium">2mg</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Magnesium</p>
+                                                <p class="text-sm font-medium">80mg</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="food-item bg-white border border-gray-100 rounded-lg p-4 shadow-sm">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <div class="flex items-center">
+                                                <h4 class="text-base font-medium text-gray-800">Apple</h4>
+                                                <span class="text-xs text-gray-500 ml-2">5:15 PM</span>
+                                            </div>
+                                            <p class="text-sm text-gray-600 mt-1">1 medium (182g)</p>
+                                            <div class="flex items-center mt-2 space-x-2">
+                                                <span class="nutrition-pill bg-blue-50 text-blue-700">95 cal</span>
+                                                <span class="nutrition-pill bg-green-50 text-green-700">0.5g protein</span>
+                                                <span class="nutrition-pill bg-yellow-50 text-yellow-700">25g carbs</span>
+                                                <span class="nutrition-pill bg-red-50 text-red-700">0.3g fat</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button class="toggle-details w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                                                <i class="ri-information-line"></i>
+                                            </button>
+                                            <button class="edit-food w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                                                <i class="ri-edit-line"></i>
+                                            </button>
+                                            <button class="delete-food w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 rounded-full hover:bg-gray-100">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="details-panel mt-3 pt-3 border-t border-gray-100">
+                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                            <div>
+                                                <p class="text-xs text-gray-500">Calories</p>
+                                                <p class="text-sm font-medium">95 kcal</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Protein</p>
+                                                <p class="text-sm font-medium">0.5g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Carbohydrates</p>
+                                                <p class="text-sm font-medium">25g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Fat</p>
+                                                <p class="text-sm font-medium">0.3g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Fiber</p>
+                                                <p class="text-sm font-medium">4.4g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Sugar</p>
+                                                <p class="text-sm font-medium">19g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Vitamin C</p>
+                                                <p class="text-sm font-medium">8.4mg</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Potassium</p>
+                                                <p class="text-sm font-medium">195mg</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="food-item bg-white border border-gray-100 rounded-lg p-4 shadow-sm">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <div class="flex items-center">
+                                                <h4 class="text-base font-medium text-gray-800">Protein Shake</h4>
+                                                <span class="text-xs text-gray-500 ml-2">9:00 PM</span>
+                                            </div>
+                                            <p class="text-sm text-gray-600 mt-1">1 serving (300ml)</p>
+                                            <div class="flex items-center mt-2 space-x-2">
+                                                <span class="nutrition-pill bg-blue-50 text-blue-700">170 cal</span>
+                                                <span class="nutrition-pill bg-green-50 text-green-700">25g protein</span>
+                                                <span class="nutrition-pill bg-yellow-50 text-yellow-700">10g carbs</span>
+                                                <span class="nutrition-pill bg-red-50 text-red-700">3g fat</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button class="toggle-details w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                                                <i class="ri-information-line"></i>
+                                            </button>
+                                            <button class="edit-food w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                                                <i class="ri-edit-line"></i>
+                                            </button>
+                                            <button class="delete-food w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 rounded-full hover:bg-gray-100">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="details-panel mt-3 pt-3 border-t border-gray-100">
+                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                            <div>
+                                                <p class="text-xs text-gray-500">Calories</p>
+                                                <p class="text-sm font-medium">170 kcal</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Protein</p>
+                                                <p class="text-sm font-medium">25g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Carbohydrates</p>
+                                                <p class="text-sm font-medium">10g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Fat</p>
+                                                <p class="text-sm font-medium">3g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Fiber</p>
+                                                <p class="text-sm font-medium">1g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Sugar</p>
+                                                <p class="text-sm font-medium">5g</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Calcium</p>
+                                                <p class="text-sm font-medium">120mg</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Iron</p>
+                                                <p class="text-sm font-medium">0.7mg</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Food Modal -->
+    <div id="foodModal" class="modal">
+        <div class="modal-content p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="modalTitle" class="text-xl font-semibold text-gray-800">Add New Food</h3>
+                <button id="closeModal" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <form id="foodForm">
+                <div class="space-y-4">
+                    <div>
+                        <label for="foodName" class="block text-sm font-medium text-gray-700 mb-1">Food Name</label>
+                        <div class="relative">
+                            <input type="text" id="foodName" name="foodName" placeholder="Enter food name" class="w-full bg-gray-50 border border-gray-300 text-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <div class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400">
+                                <i class="ri-search-line"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="portion" class="block text-sm font-medium text-gray-700 mb-1">Portion Size</label>
+                            <input type="text" id="portion" name="portion" placeholder="e.g., 1 cup, 100g" class="w-full bg-gray-50 border border-gray-300 text-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        <div>
+                            <label for="mealTime" class="block text-sm font-medium text-gray-700 mb-1">Meal Time</label>
+                            <select id="mealTime" name="mealTime" class="w-full bg-gray-50 border border-gray-300 text-gray-700 rounded px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none">
+                                <option value="breakfast">Breakfast</option>
+                                <option value="lunch">Lunch</option>
+                                <option value="dinner">Dinner</option>
+                                <option value="snack">Snack</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="timeConsumed" class="block text-sm font-medium text-gray-700 mb-1">Time Consumed</label>
+                            <input type="time" id="timeConsumed" name="timeConsumed" class="w-full bg-gray-50 border border-gray-300 text-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        <div>
+                            <label for="calories" class="block text-sm font-medium text-gray-700 mb-1">Calories</label>
+                            <div class="relative">
+                                <input type="number" id="calories" name="calories" placeholder="0" class="w-full bg-gray-50 border border-gray-300 text-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">kcal</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-700 mb-3">Nutritional Information</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            <div>
+                                <label for="protein" class="block text-xs text-gray-500 mb-1">Protein</label>
+                                <div class="relative">
+                                    <input type="number" id="protein" name="protein" placeholder="0" class="w-full bg-gray-50 border border-gray-300 text-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+                                    <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs">g</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="carbs" class="block text-xs text-gray-500 mb-1">Carbohydrates</label>
+                                <div class="relative">
+                                    <input type="number" id="carbs" name="carbs" placeholder="0" class="w-full bg-gray-50 border border-gray-300 text-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+                                    <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs">g</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="fat" class="block text-xs text-gray-500 mb-1">Fat</label>
+                                <div class="relative">
+                                    <input type="number" id="fat" name="fat" placeholder="0" class="w-full bg-gray-50 border border-gray-300 text-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+                                    <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs">g</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="fiber" class="block text-xs text-gray-500 mb-1">Fiber</label>
+                                <div class="relative">
+                                    <input type="number" id="fiber" name="fiber" placeholder="0" class="w-full bg-gray-50 border border-gray-300 text-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+                                    <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs">g</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="sugar" class="block text-xs text-gray-500 mb-1">Sugar</label>
+                                <div class="relative">
+                                    <input type="number" id="sugar" name="sugar" placeholder="0" class="w-full bg-gray-50 border border-gray-300 text-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+                                    <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs">g</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="sodium" class="block text-xs text-gray-500 mb-1">Sodium</label>
+                                <div class="relative">
+                                    <input type="number" id="sodium" name="sodium" placeholder="0" class="w-full bg-gray-50 border border-gray-300 text-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+                                    <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs">mg</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-2 mt-2">
+                        <div class="custom-checkbox" id="favoriteCheckbox"></div>
+                        <label for="favoriteCheckbox" class="text-sm text-gray-700 cursor-pointer">Add to favorites</label>
+                    </div>
+                    
+                    <div class="pt-4 flex justify-end space-x-3">
+                        <button type="button" id="cancelBtn" class="px-4 py-2 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-button hover:bg-primary/90 transition-colors whitespace-nowrap">Save Food</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirmation Dialog -->
+    <div id="confirmDialog" class="confirm-dialog">
+        <div class="confirm-content p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-3">Delete Food Item</h3>
+            <p class="text-gray-600 mb-6">Are you sure you want to delete this food item? This action cannot be undone.</p>
+            <div class="flex justify-end space-x-3">
+                <button id="cancelDelete" class="px-4 py-2 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap">Cancel</button>
+                <button id="confirmDelete" class="px-4 py-2 bg-red-500 text-white rounded-button hover:bg-red-600 transition-colors whitespace-nowrap">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div class="flex items-center">
+            <div class="w-5 h-5 flex items-center justify-center mr-2">
+                <i class="ri-check-line"></i>
+            </div>
+            <span id="toastMessage">Food item saved successfully!</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Modal functionality
+            const modal = document.getElementById('foodModal');
+            const addFoodBtn = document.getElementById('addFoodBtn');
+            const closeModal = document.getElementById('closeModal');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const foodForm = document.getElementById('foodForm');
+            const modalTitle = document.getElementById('modalTitle');
+            
+            // Confirmation dialog
+            const confirmDialog = document.getElementById('confirmDialog');
+            const cancelDelete = document.getElementById('cancelDelete');
+            const confirmDelete = document.getElementById('confirmDelete');
+            
+            // Toast notification
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            // Custom checkbox
+            const favoriteCheckbox = document.getElementById('favoriteCheckbox');
+            let isChecked = false;
+            
+            favoriteCheckbox.addEventListener('click', function() {
+                isChecked = !isChecked;
+                if (isChecked) {
+                    favoriteCheckbox.classList.add('checked');
+                } else {
+                    favoriteCheckbox.classList.remove('checked');
+                }
+            });
+            
+            // Open modal
+            addFoodBtn.addEventListener('click', function() {
+                modalTitle.textContent = 'Add New Food';
+                foodForm.reset();
+                favoriteCheckbox.classList.remove('checked');
+                isChecked = false;
+                modal.classList.add('show');
+            });
+            
+            // Close modal
+            closeModal.addEventListener('click', function() {
+                modal.classList.remove('show');
+            });
+            
+            cancelBtn.addEventListener('click', function() {
+                modal.classList.remove('show');
+            });
+            
+            // Edit food
+            const editButtons = document.querySelectorAll('.edit-food');
+            editButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const foodItem = this.closest('.food-item');
+                    const foodName = foodItem.querySelector('h4').textContent;
+                    const portion = foodItem.querySelector('p').textContent;
+                    
+                    modalTitle.textContent = 'Edit Food';
+                    document.getElementById('foodName').value = foodName;
+                    document.getElementById('portion').value = portion;
+                    
+                    // Set other values based on the food item
+                    // This would typically come from your data source
+                    
+                    modal.classList.add('show');
+                });
+            });
+            
+            // Delete food
+            const deleteButtons = document.querySelectorAll('.delete-food');
+            let currentFoodItem = null;
+            
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    currentFoodItem = this.closest('.food-item');
+                    confirmDialog.classList.add('show');
+                });
+            });
+            
+            cancelDelete.addEventListener('click', function() {
+                confirmDialog.classList.remove('show');
+                currentFoodItem = null;
+            });
+            
+            confirmDelete.addEventListener('click', function() {
+                if (currentFoodItem) {
+                    currentFoodItem.style.opacity = '0';
+                    setTimeout(() => {
+                        currentFoodItem.remove();
+                        showToast('Food item deleted successfully!', 'error');
+                    }, 300);
+                }
+                confirmDialog.classList.remove('show');
+                currentFoodItem = null;
+            });
+            
+            // Form submission
+            foodForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Here you would typically save the data
+                // For this demo, we'll just close the modal and show a success message
+                
+                modal.classList.remove('show');
+                showToast('Food item saved successfully!');
+            });
+            
+            // Toggle details
+            const toggleButtons = document.querySelectorAll('.toggle-details');
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const foodItem = this.closest('.food-item');
+                    const detailsPanel = foodItem.querySelector('.details-panel');
+                    
+                    if (detailsPanel.classList.contains('show')) {
+                        detailsPanel.classList.remove('show');
+                    } else {
+                        // Close all other open panels
+                        document.querySelectorAll('.details-panel.show').forEach(panel => {
+                            if (panel !== detailsPanel) {
+                                panel.classList.remove('show');
+                            }
+                        });
+                        
+                        detailsPanel.classList.add('show');
+                    }
+                });
+            });
+            
+            // Show toast notification
+            function showToast(message, type = 'success') {
+                toastMessage.textContent = message;
+                toast.className = 'toast';
+                
+                if (type === 'error') {
+                    toast.classList.add('error');
+                } else if (type === 'warning') {
+                    toast.classList.add('warning');
+                }
+                
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                }
+                if (e.target === confirmDialog) {
+                    confirmDialog.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrient Tracker</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#4F46E5',secondary:'#10B981'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e5e7eb;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .food-cards {
+            scroll-behavior: smooth;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .food-cards::-webkit-scrollbar {
+            display: none;
+        }
+        .custom-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .custom-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e5e7eb;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #4F46E5;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        .custom-radio {
+            display: flex;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+        }
+        .custom-radio input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .radio-mark {
+            position: relative;
+            height: 20px;
+            width: 20px;
+            background-color: #fff;
+            border: 2px solid #e5e7eb;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .custom-radio input:checked ~ .radio-mark {
+            border-color: #4F46E5;
+        }
+        .radio-mark:after {
+            content: "";
+            position: absolute;
+            display: none;
+            top: 3px;
+            left: 3px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4F46E5;
+        }
+        .custom-radio input:checked ~ .radio-mark:after {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow-sm">
+            <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-semibold text-gray-800">Nutrient Tracker</h1>
+                    <p class="text-sm text-gray-500">Tuesday, April 22, 2025</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full cursor-pointer">
+                        <i class="ri-settings-3-line ri-lg text-gray-600"></i>
+                    </div>
+                    <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full cursor-pointer">
+                        <i class="ri-user-line ri-lg text-gray-600"></i>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-6">
+            <!-- Summary Card -->
+            <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Daily Summary</h2>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-500">Show percentages</span>
+                        <label class="custom-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div id="summary-chart" class="h-64 w-full"></div>
+                <div class="grid grid-cols-3 gap-4 mt-4">
+                    <div class="bg-blue-50 rounded p-3 text-center">
+                        <p class="text-sm text-gray-600">Calories</p>
+                        <p class="text-xl font-semibold text-gray-800">1,450 / 2,000</p>
+                        <p class="text-sm text-blue-600">72% of daily goal</p>
+                    </div>
+                    <div class="bg-green-50 rounded p-3 text-center">
+                        <p class="text-sm text-gray-600">Water</p>
+                        <p class="text-xl font-semibold text-gray-800">1.2 / 2.5 L</p>
+                        <p class="text-sm text-green-600">48% of daily goal</p>
+                    </div>
+                    <div class="bg-purple-50 rounded p-3 text-center">
+                        <p class="text-sm text-gray-600">Exercise</p>
+                        <p class="text-xl font-semibold text-gray-800">25 / 30 min</p>
+                        <p class="text-sm text-purple-600">83% of daily goal</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nutrient Progress Section -->
+            <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800">Nutrient Progress</h2>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full cursor-pointer">
+                            <i class="ri-filter-3-line text-gray-600"></i>
+                        </div>
+                        <div class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full cursor-pointer">
+                            <i class="ri-refresh-line text-gray-600"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nutrient Progress Bars -->
+                <div class="space-y-5">
+                    <!-- Protein -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-full mr-2">
+                                    <i class="ri-seedling-line text-blue-600"></i>
+                                </div>
+                                <span class="font-medium text-gray-800">Protein</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-sm font-medium text-gray-800">75%</span>
+                                <span class="text-xs text-gray-500 ml-1">45g / 60g</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill bg-blue-500" style="width: 75%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Carbohydrates -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center bg-yellow-100 rounded-full mr-2">
+                                    <i class="ri-bread-line text-yellow-600"></i>
+                                </div>
+                                <span class="font-medium text-gray-800">Carbohydrates</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-sm font-medium text-gray-800">90%</span>
+                                <span class="text-xs text-gray-500 ml-1">225g / 250g</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill bg-yellow-500" style="width: 90%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Fats -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center bg-green-100 rounded-full mr-2">
+                                    <i class="ri-drop-line text-green-600"></i>
+                                </div>
+                                <span class="font-medium text-gray-800">Fats</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-sm font-medium text-gray-800">65%</span>
+                                <span class="text-xs text-gray-500 ml-1">39g / 60g</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill bg-green-500" style="width: 65%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Vitamin D -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center bg-red-100 rounded-full mr-2">
+                                    <i class="ri-sun-line text-red-600"></i>
+                                </div>
+                                <span class="font-medium text-gray-800">Vitamin D</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-sm font-medium text-red-600">35%</span>
+                                <span class="text-xs text-gray-500 ml-1">7μg / 20μg</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill bg-red-500" style="width: 35%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Iron -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center bg-red-100 rounded-full mr-2">
+                                    <i class="ri-copper-coin-line text-red-600"></i>
+                                </div>
+                                <span class="font-medium text-gray-800">Iron</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-sm font-medium text-red-600">40%</span>
+                                <span class="text-xs text-gray-500 ml-1">6mg / 15mg</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill bg-red-500" style="width: 40%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Calcium -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center bg-purple-100 rounded-full mr-2">
+                                    <i class="ri-capsule-line text-purple-600"></i>
+                                </div>
+                                <span class="font-medium text-gray-800">Calcium</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-sm font-medium text-gray-800">85%</span>
+                                <span class="text-xs text-gray-500 ml-1">850mg / 1000mg</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill bg-purple-500" style="width: 85%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deficient Nutrients Alert -->
+            <div class="bg-red-50 border border-red-100 rounded-lg p-6 mb-6">
+                <div class="flex items-start">
+                    <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-full mr-4">
+                        <i class="ri-alert-line text-red-600 ri-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Nutrient Deficiencies Detected</h3>
+                        <p class="text-gray-600 mb-4">Your intake of the following nutrients is below recommended levels:</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="flex items-center bg-white p-3 rounded-lg shadow-sm">
+                                <div class="w-8 h-8 flex items-center justify-center bg-red-100 rounded-full mr-3">
+                                    <i class="ri-sun-line text-red-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800">Vitamin D</p>
+                                    <p class="text-sm text-red-600">7μg / 20μg (35%)</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center bg-white p-3 rounded-lg shadow-sm">
+                                <div class="w-8 h-8 flex items-center justify-center bg-red-100 rounded-full mr-3">
+                                    <i class="ri-copper-coin-line text-red-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800">Iron</p>
+                                    <p class="text-sm text-red-600">6mg / 15mg (40%)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Food Recommendations -->
+            <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800">Recommended Foods</h2>
+                    <div class="flex gap-2">
+                        <div class="flex items-center">
+                            <label class="custom-radio mr-4">
+                                <input type="radio" name="food-filter" checked>
+                                <span class="radio-mark"></span>
+                                <span class="text-sm">All</span>
+                            </label>
+                            <label class="custom-radio mr-4">
+                                <input type="radio" name="food-filter">
+                                <span class="radio-mark"></span>
+                                <span class="text-sm">Vitamin D</span>
+                            </label>
+                            <label class="custom-radio">
+                                <input type="radio" name="food-filter">
+                                <span class="radio-mark"></span>
+                                <span class="text-sm">Iron</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vitamin D Foods -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium text-gray-800 mb-4">Rich in Vitamin D</h3>
+                    <div class="food-cards flex overflow-x-auto gap-4 pb-2">
+                        <!-- Food Card 1 -->
+                        <div class="min-w-[220px] bg-white border border-gray-100 rounded-lg shadow-sm overflow-hidden flex-shrink-0">
+                            <img src="https://readdy.ai/api/search-image?query=A%20close-up%20photograph%20of%20a%20piece%20of%20salmon%20fillet%20with%20crispy%20skin%20on%20a%20white%20plate%2C%20garnished%20with%20fresh%20herbs%20and%20lemon.%20The%20salmon%20has%20a%20moist%2C%20flaky%20texture%20and%20a%20rich%20pink-orange%20color.&width=400&height=250&seq=1&orientation=landscape" alt="Salmon" class="w-full h-36 object-cover object-top">
+                            <div class="p-4">
+                                <h4 class="font-medium text-gray-800 mb-1">Salmon</h4>
+                                <p class="text-sm text-gray-600 mb-2">Rich in Vitamin D and Omega-3</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">100g portion</span>
+                                    <span class="text-xs text-gray-500">14μg (70% DV)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Food Card 2 -->
+                        <div class="min-w-[220px] bg-white border border-gray-100 rounded-lg shadow-sm overflow-hidden flex-shrink-0">
+                            <img src="https://readdy.ai/api/search-image?query=A%20close-up%20photograph%20of%20fortified%20milk%20being%20poured%20into%20a%20clear%20glass%20against%20a%20clean%20white%20background.%20The%20milk%20is%20pure%20white%20and%20creates%20a%20smooth%20flowing%20stream%20with%20tiny%20bubbles%20forming%20at%20the%20surface%20of%20the%20glass.&width=400&height=250&seq=2&orientation=landscape" alt="Fortified Milk" class="w-full h-36 object-cover object-top">
+                            <div class="p-4">
+                                <h4 class="font-medium text-gray-800 mb-1">Fortified Milk</h4>
+                                <p class="text-sm text-gray-600 mb-2">Good source of Vitamin D and Calcium</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">250ml serving</span>
+                                    <span class="text-xs text-gray-500">3μg (15% DV)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Food Card 3 -->
+                        <div class="min-w-[220px] bg-white border border-gray-100 rounded-lg shadow-sm overflow-hidden flex-shrink-0">
+                            <img src="https://readdy.ai/api/search-image?query=A%20close-up%20photograph%20of%20egg%20yolks%20in%20a%20white%20ceramic%20bowl.%20The%20yolks%20are%20bright%20yellow-orange%20and%20glossy%2C%20showing%20their%20rich%20texture.%20The%20lighting%20is%20bright%20and%20natural%2C%20highlighting%20the%20vibrant%20color%20against%20the%20white%20bowl.&width=400&height=250&seq=3&orientation=landscape" alt="Egg Yolks" class="w-full h-36 object-cover object-top">
+                            <div class="p-4">
+                                <h4 class="font-medium text-gray-800 mb-1">Egg Yolks</h4>
+                                <p class="text-sm text-gray-600 mb-2">Natural source of Vitamin D</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">2 large eggs</span>
+                                    <span class="text-xs text-gray-500">2μg (10% DV)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Food Card 4 -->
+                        <div class="min-w-[220px] bg-white border border-gray-100 rounded-lg shadow-sm overflow-hidden flex-shrink-0">
+                            <img src="https://readdy.ai/api/search-image?query=A%20close-up%20photograph%20of%20fresh%20mushrooms%20arranged%20on%20a%20white%20plate.%20The%20mushrooms%20are%20clean%2C%20with%20smooth%20caps%20and%20varying%20sizes%2C%20showing%20their%20natural%20earthy%20brown%20color%20and%20delicate%20texture.%20The%20lighting%20is%20bright%20and%20even.&width=400&height=250&seq=4&orientation=landscape" alt="Mushrooms" class="w-full h-36 object-cover object-top">
+                            <div class="p-4">
+                                <h4 class="font-medium text-gray-800 mb-1">Mushrooms</h4>
+                                <p class="text-sm text-gray-600 mb-2">Plant source of Vitamin D</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">100g serving</span>
+                                    <span class="text-xs text-gray-500">2.3μg (11% DV)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Iron Rich Foods -->
+                <div>
+                    <h3 class="text-lg font-medium text-gray-800 mb-4">Rich in Iron</h3>
+                    <div class="food-cards flex overflow-x-auto gap-4 pb-2">
+                        <!-- Food Card 1 -->
+                        <div class="min-w-[220px] bg-white border border-gray-100 rounded-lg shadow-sm overflow-hidden flex-shrink-0">
+                            <img src="https://readdy.ai/api/search-image?query=A%20close-up%20photograph%20of%20a%20cooked%20spinach%20dish%20in%20a%20white%20bowl.%20The%20spinach%20leaves%20are%20deep%20green%2C%20slightly%20wilted%2C%20and%20glistening%20with%20a%20light%20drizzle%20of%20olive%20oil.%20Some%20garlic%20pieces%20are%20visible%20among%20the%20leaves.&width=400&height=250&seq=5&orientation=landscape" alt="Spinach" class="w-full h-36 object-cover object-top">
+                            <div class="p-4">
+                                <h4 class="font-medium text-gray-800 mb-1">Spinach</h4>
+                                <p class="text-sm text-gray-600 mb-2">Excellent plant source of Iron</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">100g cooked</span>
+                                    <span class="text-xs text-gray-500">3.6mg (20% DV)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Food Card 2 -->
+                        <div class="min-w-[220px] bg-white border border-gray-100 rounded-lg shadow-sm overflow-hidden flex-shrink-0">
+                            <img src="https://readdy.ai/api/search-image?query=A%20close-up%20photograph%20of%20lean%20beef%20steak%20sliced%20on%20a%20white%20plate.%20The%20meat%20is%20cooked%20medium%2C%20showing%20a%20pink%20center%20with%20a%20well-seared%20exterior.%20The%20slices%20are%20arranged%20neatly%2C%20revealing%20the%20juicy%20texture%20of%20the%20meat.&width=400&height=250&seq=6&orientation=landscape" alt="Lean Beef" class="w-full h-36 object-cover object-top">
+                            <div class="p-4">
+                                <h4 class="font-medium text-gray-800 mb-1">Lean Beef</h4>
+                                <p class="text-sm text-gray-600 mb-2">High in heme iron</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">85g serving</span>
+                                    <span class="text-xs text-gray-500">2.1mg (12% DV)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Food Card 3 -->
+                        <div class="min-w-[220px] bg-white border border-gray-100 rounded-lg shadow-sm overflow-hidden flex-shrink-0">
+                            <img src="https://readdy.ai/api/search-image?query=A%20close-up%20photograph%20of%20lentil%20soup%20in%20a%20white%20bowl.%20The%20soup%20has%20a%20rich%2C%20reddish-brown%20color%20with%20visible%20lentils%20and%20small%20pieces%20of%20vegetables.%20Steam%20rises%20gently%20from%20the%20surface%2C%20and%20a%20spoon%20rests%20beside%20the%20bowl.&width=400&height=250&seq=7&orientation=landscape" alt="Lentils" class="w-full h-36 object-cover object-top">
+                            <div class="p-4">
+                                <h4 class="font-medium text-gray-800 mb-1">Lentils</h4>
+                                <p class="text-sm text-gray-600 mb-2">Plant-based iron source</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">100g cooked</span>
+                                    <span class="text-xs text-gray-500">3.3mg (18% DV)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Food Card 4 -->
+                        <div class="min-w-[220px] bg-white border border-gray-100 rounded-lg shadow-sm overflow-hidden flex-shrink-0">
+                            <img src="https://readdy.ai/api/search-image?query=A%20close-up%20photograph%20of%20dark%20chocolate%20pieces%20arranged%20on%20a%20white%20plate.%20The%20chocolate%20has%20a%20rich%2C%20glossy%20surface%20with%20visible%20cocoa%20particles.%20Some%20pieces%20are%20broken%20to%20reveal%20the%20smooth%20interior%20texture.&width=400&height=250&seq=8&orientation=landscape" alt="Dark Chocolate" class="w-full h-36 object-cover object-top">
+                            <div class="p-4">
+                                <h4 class="font-medium text-gray-800 mb-1">Dark Chocolate</h4>
+                                <p class="text-sm text-gray-600 mb-2">Surprising source of iron</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">30g (70%+ cocoa)</span>
+                                    <span class="text-xs text-gray-500">2.3mg (13% DV)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Meal Planning -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800">Today's Meal Plan</h2>
+                    <button class="bg-primary text-white px-4 py-2 rounded-button flex items-center whitespace-nowrap">
+                        <i class="ri-add-line mr-1"></i>
+                        Add Meal
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <!-- Breakfast -->
+                    <div class="border border-gray-100 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center bg-yellow-100 rounded-full mr-2">
+                                    <i class="ri-sun-line text-yellow-600"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-800">Breakfast</h3>
+                            </div>
+                            <span class="text-sm text-gray-500">8:30 AM</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">Oatmeal (1 cup)</span>
+                            <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">Banana (1 medium)</span>
+                            <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">Almond milk (240ml)</span>
+                            <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">Walnuts (15g)</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <div class="flex gap-3">
+                                <span class="text-gray-600">380 kcal</span>
+                                <span class="text-gray-600">12g protein</span>
+                                <span class="text-gray-600">58g carbs</span>
+                                <span class="text-gray-600">14g fat</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <div class="w-7 h-7 flex items-center justify-center bg-gray-100 rounded-full cursor-pointer">
+                                    <i class="ri-edit-line text-gray-600 ri-sm"></i>
+                                </div>
+                                <div class="w-7 h-7 flex items-center justify-center bg-gray-100 rounded-full cursor-pointer">
+                                    <i class="ri-delete-bin-line text-gray-600 ri-sm"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lunch -->
+                    <div class="border border-gray-100 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center bg-orange-100 rounded-full mr-2">
+                                    <i class="ri-restaurant-line text-orange-600"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-800">Lunch</h3>
+                            </div>
+                            <span class="text-sm text-gray-500">12:30 PM</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">Salmon (120g)</span>
+                            <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">Brown rice (1 cup)</span>
+                            <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">Steamed spinach (100g)</span>
+                            <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">+Vitamin D</span>
+                            <span class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">+Iron</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <div class="flex gap-3">
+                                <span class="text-gray-600">520 kcal</span>
+                                <span class="text-gray-600">38g protein</span>
+                                <span class="text-gray-600">45g carbs</span>
+                                <span class="text-gray-600">18g fat</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <div class="w-7 h-7 flex items-center justify-center bg-gray-100 rounded-full cursor-pointer">
+                                    <i class="ri-edit-line text-gray-600 ri-sm"></i>
+                                </div>
+                                <div class="w-7 h-7 flex items-center justify-center bg-gray-100 rounded-full cursor-pointer">
+                                    <i class="ri-delete-bin-line text-gray-600 ri-sm"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dinner -->
+                    <div class="border border-gray-100 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-full mr-2">
+                                    <i class="ri-moon-line text-blue-600"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-800">Dinner</h3>
+                            </div>
+                            <span class="text-sm text-gray-500">7:00 PM</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">Lentil soup (250ml)</span>
+                            <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">Whole grain bread (2 slices)</span>
+                            <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">Mixed green salad (150g)</span>
+                            <span class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">+Iron</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <div class="flex gap-3">
+                                <span class="text-gray-600">420 kcal</span>
+                                <span class="text-gray-600">18g protein</span>
+                                <span class="text-gray-600">65g carbs</span>
+                                <span class="text-gray-600">8g fat</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <div class="w-7 h-7 flex items-center justify-center bg-gray-100 rounded-full cursor-pointer">
+                                    <i class="ri-edit-line text-gray-600 ri-sm"></i>
+                                </div>
+                                <div class="w-7 h-7 flex items-center justify-center bg-gray-100 rounded-full cursor-pointer">
+                                    <i class="ri-delete-bin-line text-gray-600 ri-sm"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Summary Chart
+            const summaryChart = echarts.init(document.getElementById('summary-chart'));
+            const summaryOption = {
+                animation: false,
+                tooltip: {
+                    trigger: 'axis',
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    borderColor: '#e5e7eb',
+                    textStyle: {
+                        color: '#1f2937'
+                    }
+                },
+                legend: {
+                    data: ['Proteins', 'Carbs', 'Fats', 'Vitamins'],
+                    bottom: 0,
+                    textStyle: {
+                        color: '#1f2937'
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '15%',
+                    top: '3%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    axisLine: {
+                        lineStyle: {
+                            color: '#e5e7eb'
+                        }
+                    },
+                    axisLabel: {
+                        color: '#6b7280'
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLine: {
+                        show: false
+                    },
+                    axisLabel: {
+                        color: '#6b7280'
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            color: '#f3f4f6'
+                        }
+                    }
+                },
+                series: [
+                    {
+                        name: 'Proteins',
+                        type: 'line',
+                        stack: 'Total',
+                        smooth: true,
+                        lineStyle: {
+                            width: 2
+                        },
+                        showSymbol: false,
+                        areaStyle: {
+                            opacity: 0.1,
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {
+                                    offset: 0,
+                                    color: 'rgba(87, 181, 231, 0.2)'
+                                },
+                                {
+                                    offset: 1,
+                                    color: 'rgba(87, 181, 231, 0.0)'
+                                }
+                            ])
+                        },
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        color: 'rgba(87, 181, 231, 1)',
+                        data: [65, 70, 75, 60, 80, 85, 75]
+                    },
+                    {
+                        name: 'Carbs',
+                        type: 'line',
+                        stack: 'Total',
+                        smooth: true,
+                        lineStyle: {
+                            width: 2
+                        },
+                        showSymbol: false,
+                        areaStyle: {
+                            opacity: 0.1,
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {
+                                    offset: 0,
+                                    color: 'rgba(141, 211, 199, 0.2)'
+                                },
+                                {
+                                    offset: 1,
+                                    color: 'rgba(141, 211, 199, 0.0)'
+                                }
+                            ])
+                        },
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        color: 'rgba(141, 211, 199, 1)',
+                        data: [85, 90, 80, 85, 95, 90, 90]
+                    },
+                    {
+                        name: 'Fats',
+                        type: 'line',
+                        stack: 'Total',
+                        smooth: true,
+                        lineStyle: {
+                            width: 2
+                        },
+                        showSymbol: false,
+                        areaStyle: {
+                            opacity: 0.1,
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {
+                                    offset: 0,
+                                    color: 'rgba(251, 191, 114, 0.2)'
+                                },
+                                {
+                                    offset: 1,
+                                    color: 'rgba(251, 191, 114, 0.0)'
+                                }
+                            ])
+                        },
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        color: 'rgba(251, 191, 114, 1)',
+                        data: [60, 65, 70, 60, 75, 70, 65]
+                    },
+                    {
+                        name: 'Vitamins',
+                        type: 'line',
+                        stack: 'Total',
+                        smooth: true,
+                        lineStyle: {
+                            width: 2
+                        },
+                        showSymbol: false,
+                        areaStyle: {
+                            opacity: 0.1,
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {
+                                    offset: 0,
+                                    color: 'rgba(252, 141, 98, 0.2)'
+                                },
+                                {
+                                    offset: 1,
+                                    color: 'rgba(252, 141, 98, 0.0)'
+                                }
+                            ])
+                        },
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        color: 'rgba(252, 141, 98, 1)',
+                        data: [40, 45, 50, 35, 55, 50, 35]
+                    }
+                ]
+            };
+            summaryChart.setOption(summaryOption);
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                summaryChart.resize();
+            });
+
+            // Handle radio buttons for food filter
+            const radioButtons = document.querySelectorAll('input[name="food-filter"]');
+            radioButtons.forEach(button => {
+                button.addEventListener('change', function() {
+                    // Food filtering logic would go here
+                    console.log('Filter changed to:', this.nextElementSibling.nextElementSibling.textContent);
+                });
+            });
+
+            // Handle switch toggle
+            const toggleSwitch = document.querySelector('.custom-switch input');
+            toggleSwitch.addEventListener('change', function() {
+                // Toggle percentage display logic would go here
+                console.log('Toggle switch changed to:', this.checked ? 'on' : 'off');
+            });
+        });
+    </script>
+</body>
+</html>
