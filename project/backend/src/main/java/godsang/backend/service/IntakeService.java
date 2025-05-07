@@ -4,7 +4,10 @@ import godsang.backend.entity.Food;
 import godsang.backend.entity.IntakeFood;
 import godsang.backend.entity.IntakeHistory;
 import godsang.backend.entity.Member;
+import godsang.backend.entity.dto.FoodDto;
 import godsang.backend.entity.dto.IntakeRequestDto;
+import godsang.backend.entity.dto.IntakeResponseDto;
+import godsang.backend.entity.dto.RequestIIntakeHistory;
 import godsang.backend.exception.EntityNotFoundException;
 import godsang.backend.repository.FoodRepository;
 import godsang.backend.repository.IntakeFoodRepository;
@@ -29,35 +32,6 @@ public class IntakeService {
     private final IntakeHistoryRepository intakeHistoryRepository;
     private final IntakeFoodRepository intakeFoodRepository;
     private final FoodRepository foodRepository;
-
-//    @Transactional
-//    public void registerIntakeFood(IntakeRequestDto requestDto) {
-//        Optional<Member> findMember = memberRepository.findById(requestDto.getMemberId());
-//        if (findMember.isEmpty())
-//            throw new EntityNotFoundException("Not Found Member Entity");
-//
-//        log.info("member = {}", findMember.get());
-//        IntakeHistory intakeHistory = IntakeHistory.builder().id(null).member(findMember.get())
-//                .intakeDate(requestDto.getDate()).mealType(requestDto.getMealType())
-//                .build();
-//        intakeHistoryRepository.save(intakeHistory);
-//
-//        for (IntakeRequestDto.RequestItem request : requestDto.getItems()) {
-//            Optional<Food> getFood = foodRepository.findById(request.getFooId());
-//
-//            Food food = getFood.orElseThrow(() ->
-//                    new EntityNotFoundException("음식을 찾을 수 없습니다."));
-//
-//            IntakeFood intakeFood = IntakeFood.builder()/*.id(null).intakeHistory(intakeHistory)*/
-//                    .food(food).amount(request.getGram()).build();
-//
-//            intakeFoodRepository.save(intakeFood);
-//            log.info("저장된 IntakeFood = {}", intakeFood);
-//        }
-//
-//        log.info("저장된 IntakeHistory = {}", intakeHistory);
-//        log.info("저장된 IntakeHistory.IntakeFoods = {}", intakeHistory.getIntakeFoods());
-//    }
 
     @Transactional
     public void registerIntakeFood(IntakeRequestDto requestDto) {
@@ -101,11 +75,25 @@ public class IntakeService {
         intakeHistoryRepository.save(intakeHistory);
     }
 
-    //Todo
-    public IntakeHistory intakeHistoryList(Long id) {
-        Optional<IntakeHistory> findHistory = intakeHistoryRepository.findById(id);
-        IntakeHistory intakeHistory = findHistory.orElseThrow(
-                () -> new EntityNotFoundException("히스토리 찾을 수 없음"));
-        return intakeHistory;
+    public IntakeResponseDto intakeHistoryList(RequestIIntakeHistory intakeHistory) {
+        Member member = memberRepository.findById(intakeHistory.getMemberId())
+                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+
+        List<IntakeHistory> intakeHistories = intakeHistoryRepository.findHistoryForDate(intakeHistory.getDate(), member);
+        IntakeResponseDto response = new IntakeResponseDto();
+
+        for (IntakeHistory history : intakeHistories) {
+            List<IntakeFood> intakeFoods = history.getIntakeFoods();
+            for (int i = 0; i < intakeFoods.size(); i++) {
+                int amount = intakeFoods.get(i).getAmount();
+                FoodDto food = new FoodDto(intakeFoods.get(i).getFood());
+                food.changToGram(amount);
+                food.convertToGram();
+
+                response.getIntakeMap().get(history.getMealType()).add(food);
+            }
+        }
+        return response;
     }
+
 }

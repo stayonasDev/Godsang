@@ -44,4 +44,5 @@ public class Food {
         this.cholest = dto.getCholest();
         this.sugar = dto.getSugar();
     }
+
 }

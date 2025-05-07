@@ -17,6 +17,8 @@ public class FoodDto {
 
     private Long id;
 
+    private int amount;
+
     @NotBlank
     @NotEmpty
     private String name;
@@ -62,5 +64,24 @@ public class FoodDto {
         this.sodium = food.getSodium();
         this.cholest = food.getCholest();
         this.sugar = food.getSugar();
+    }
+
+    public void changToGram(int amount){
+        this.amount = amount;
+    }
+
+    public void convertToGram() {
+        int gram = amount / 100;
+        this.kal *= gram;
+        this.carb *= gram;
+        this.protein *= gram;
+        this.pat *= gram;
+        this.saturatedFat *= gram;
+        this.transFat *= gram;
+        this.polyFat *= gram;
+        this.unsaturatedFat *= gram;
+        this.sodium *= gram;
+        this.cholest *= gram;
+        this.sugar *= gram;
     }
 }

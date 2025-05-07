@@ -1,12 +1,13 @@
 package godsang.backend.service;
 
-import godsang.backend.entity.IntakeHistory;
-import godsang.backend.entity.MealType;
+import godsang.backend.entity.*;
+import godsang.backend.entity.dto.FoodDto;
 import godsang.backend.entity.dto.IntakeRequestDto;
+import godsang.backend.entity.dto.IntakeResponseDto;
+import godsang.backend.entity.dto.RequestIIntakeHistory;
 import godsang.backend.exception.EntityNotFoundException;
-import jakarta.annotation.PostConstruct;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import godsang.backend.repository.FoodRepository;
+import godsang.backend.repository.MemberRepository;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,8 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,10 +26,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class IntakeServiceTest {
 
     private final IntakeService intakeService;
+    private final MemberRepository memberRepository;
+    private final FoodRepository foodRepository;
 
     @Autowired
-    public IntakeServiceTest(IntakeService intakeService) {
+    public IntakeServiceTest(IntakeService intakeService, MemberRepository memberRepository,
+                             FoodRepository foodRepository) {
         this.intakeService = intakeService;
+        this.memberRepository = memberRepository;
+        this.foodRepository = foodRepository;
     }
 
     @Test
@@ -84,24 +88,29 @@ class IntakeServiceTest {
     }
 
     @Test
-    void intakeFoodList(){
-//        Optional<IntakeHistory> intakeHistory = intakeService.intakeHistoryList(1L);
-//        log.info(intakeHistory.get());
-    }
+    @DisplayName("해당 날짜에 맞게 아침, 점심, 저녁에 섭취한 음식들을 반환하고 섭취한 amount 만큼 변하는지 확인")
+    @Transactional
+    void RequestIntakeHistory() {
+        RequestIIntakeHistory intakeHistory = new RequestIIntakeHistory(1L,
+                LocalDate.of(2023, 2, 26));
+        IntakeResponseDto intakeResponseDto = intakeService.intakeHistoryList(intakeHistory);
 
-//    @BeforeEach
-//    @Rollback(value = false)
-//    public void initIntakeFood() {
-//        List<IntakeRequestDto.RequestItem> items = new ArrayList<>();
-//        IntakeRequestDto.RequestItem item1 = new IntakeRequestDto.RequestItem(1L, 100);
-//        IntakeRequestDto.RequestItem item2 = new IntakeRequestDto.RequestItem(2L, 100);
-//        IntakeRequestDto.RequestItem item3= new IntakeRequestDto.RequestItem(3L, 100);
-//        items.add(item1);
-//        items.add(item2);
-//        items.add(item3);
-//
-//        IntakeRequestDto requestDto = new IntakeRequestDto(1L, LocalDate.now(), MealType.MORNING,
-//                items);
-//        intakeService.registerIntakeFood(requestDto);
-//    }
+        for (FoodDto food : intakeResponseDto.getIntakeMap().get(MealType.MORNING)) {
+            log.info("아침에 섭취한 음식들 = {}", food);
+        }
+        for (FoodDto food : intakeResponseDto.getIntakeMap().get(MealType.LUNCH)) {
+            log.info("점심에 섭취한 음식들 = {}", food);
+        }
+        for (FoodDto food : intakeResponseDto.getIntakeMap().get(MealType.DINNER)) {
+            log.info("저녁에 섭취한 음식들 = {}", food);
+        }
+
+        Food findByFood = foodRepository.findById(34L).orElseThrow(() ->
+                new EntityNotFoundException("음식을 찾지 못했습니다."));
+        FoodDto food = new FoodDto(findByFood);
+        FoodDto intakeFood = intakeResponseDto.getIntakeMap().get(MealType.MORNING).get(2);
+        log.info("Food 테이블에 저장되어 있는 음식 정보 = {}",food);
+        log.info("IntakeFood 테이블에 저장되어 있는 amount 만큼 변환한 Food = {}",intakeFood);
+        org.assertj.core.api.Assertions.assertThat(food).isNotSameAs(intakeFood);
+    }
 }

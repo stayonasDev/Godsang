@@ -1,9 +1,7 @@
 package godsang.backend.controller;
 
 import godsang.backend.entity.IntakeHistory;
-import godsang.backend.entity.dto.FoodDto;
-import godsang.backend.entity.dto.IntakeRequestDto;
-import godsang.backend.entity.dto.PageRequestDto;
+import godsang.backend.entity.dto.*;
 import godsang.backend.service.FoodService;
 import godsang.backend.service.IntakeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -67,10 +65,23 @@ public class FoodController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/intakes/{id}")
-    public ResponseEntity<IntakeHistory> findByIntake(@PathVariable("id") Long id) {
-        return ResponseEntity.ok().body(intakeService.intakeHistoryList(id));
+    @Operation(summary = "해당 날짜를 조회해 아침, 점심, 저녁에 섭취한 음식들 amount에 맞게 반환합니다.")
+    @GetMapping("/intakes")
+    public ResponseEntity<IntakeResponseDto> intakeFoodOfDateList(@RequestParam(value = "memberId") Long memberId,
+                                                                  @RequestParam(value = "date") LocalDate date) {
+        RequestIIntakeHistory request = new RequestIIntakeHistory(memberId, date);
+        return ResponseEntity.ok().body(intakeService.intakeHistoryList(request));
     }
 
 
+    //MemberId, Date, MealType, FoodId
+    @PatchMapping("/intakes")
+    public void intakeFoodEdit() {
+
+    }
+
+    @DeleteMapping("/intakes")
+    public void intakeFoodDelete() {
+
+    }
 }

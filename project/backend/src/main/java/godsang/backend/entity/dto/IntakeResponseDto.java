@@ -1,16 +1,21 @@
 package godsang.backend.entity.dto;
 
-import godsang.backend.entity.Food;
 import godsang.backend.entity.MealType;
-import jakarta.persistence.Entity;
+import lombok.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-//TODO
-//Map<MealType, List<FoodList>> 사용할지 다른거 사용할지
-public class IntakeResponseDto {
-    private MealType mealType;
-    private int amount;
-    List<Food> foodList = new ArrayList<>();
+@Data
+ public class IntakeResponseDto {
+    private Map<MealType, List<FoodDto>> intakeMap;
+
+    public IntakeResponseDto() {
+        this.intakeMap = new HashMap<>();
+        this.intakeMap.put(MealType.MORNING ,new ArrayList<>());
+        this.intakeMap.put(MealType.LUNCH ,new ArrayList<>());
+        this.intakeMap.put(MealType.DINNER ,new ArrayList<>());
+    }
 }

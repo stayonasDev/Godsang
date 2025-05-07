@@ -9,13 +9,14 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "amount"})
 @AllArgsConstructor
+@Getter
 public class IntakeFood {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "intake_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "history_id")
     private IntakeHistory intakeHistory;
 
