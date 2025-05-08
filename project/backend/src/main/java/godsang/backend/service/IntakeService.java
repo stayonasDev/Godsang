@@ -1,9 +1,6 @@
 package godsang.backend.service;
 
-import godsang.backend.entity.Food;
-import godsang.backend.entity.IntakeFood;
-import godsang.backend.entity.IntakeHistory;
-import godsang.backend.entity.Member;
+import godsang.backend.entity.*;
 import godsang.backend.entity.dto.FoodDto;
 import godsang.backend.entity.dto.IntakeRequestDto;
 import godsang.backend.entity.dto.IntakeResponseDto;
@@ -18,6 +15,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -54,7 +52,6 @@ public class IntakeService {
         log.info("IntakeFood 생성");
         log.info("Food ID = {}", requestDto.getItems().get(0).getFoodId());
         for (IntakeRequestDto.RequestItem item : requestDto.getItems()) {
-            log.info("requestDto.Items 비어 있니?");
             log.info("Food = {}", item);
             Food food = foodRepository.findById(item.getFoodId())
                     .orElseThrow(() -> new RuntimeException("Food not found"));
@@ -96,4 +93,12 @@ public class IntakeService {
         return response;
     }
 
+    @Transactional
+    public void intakeFoodEdit(Long memberId, LocalDate date, MealType meal, Long foodId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() ->
+                new EntityNotFoundException("회원을 찾을 수 없습니다."));
+
+//        IntakeHistory byIntakeHistory = intakeHistoryRepository.findByIntakeHistory(member, date, meal);
+//        log.info("byIntakeHistory = {}",byIntakeHistory);
+    }
 }

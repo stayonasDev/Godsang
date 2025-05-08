@@ -113,4 +113,10 @@ class IntakeServiceTest {
         log.info("IntakeFood 테이블에 저장되어 있는 amount 만큼 변환한 Food = {}",intakeFood);
         org.assertj.core.api.Assertions.assertThat(food).isNotSameAs(intakeFood);
     }
+
+    @Test
+    void edit() {
+//        LocalDate date = LocalDate.of(2023, 2, 26);
+//        intakeService.intakeFoodEdit(1L, date, MealType.MORNING, 1L);
+    }
 }

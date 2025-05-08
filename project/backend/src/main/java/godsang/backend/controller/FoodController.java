@@ -1,6 +1,7 @@
 package godsang.backend.controller;
 
 import godsang.backend.entity.IntakeHistory;
+import godsang.backend.entity.MealType;
 import godsang.backend.entity.dto.*;
 import godsang.backend.service.FoodService;
 import godsang.backend.service.IntakeService;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.awt.print.Pageable;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -76,8 +78,12 @@ public class FoodController {
 
     //MemberId, Date, MealType, FoodId
     @PatchMapping("/intakes")
-    public void intakeFoodEdit() {
+    public ResponseEntity<?> intakeFoodEdit(@RequestParam Long MemberId, @RequestParam LocalDate date,
+                               @RequestParam MealType meal, @RequestParam Long fooId) {
+        //서비스 호출
 
+        Map<Integer, String> response = Map.of(200, "Success");
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/intakes")
