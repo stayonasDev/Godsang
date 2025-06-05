@@ -1,12 +1,12 @@
 package godsang.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import godsang.backend.entity.member.Member;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

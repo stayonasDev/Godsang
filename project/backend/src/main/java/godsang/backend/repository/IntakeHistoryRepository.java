@@ -1,8 +1,7 @@
 package godsang.backend.repository;
 
 import godsang.backend.entity.IntakeHistory;
-import godsang.backend.entity.MealType;
-import godsang.backend.entity.Member;
+import godsang.backend.entity.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

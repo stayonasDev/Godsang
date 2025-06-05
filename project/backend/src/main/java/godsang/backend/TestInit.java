@@ -1,7 +1,7 @@
 //package godsang.backend;
 //
 //import godsang.backend.entity.Food;
-//import godsang.backend.entity.Member;
+//import godsang.backend.entity.member.Member;
 //import godsang.backend.entity.dto.FoodDto;
 //import godsang.backend.repository.MemberRepository;
 //import godsang.backend.service.FoodService;

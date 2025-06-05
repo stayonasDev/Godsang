@@ -1,4 +1,4 @@
-package godsang.backend.entity;
+package godsang.backend.entity.member;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -15,11 +15,11 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QMember extends EntityPathBase<Member> {
 
-    private static final long serialVersionUID = -1010591584L;
+    private static final long serialVersionUID = -2061213720L;
 
     public static final QMember member = new QMember("member1");
 
-    public final QBaseTimeEntity _super = new QBaseTimeEntity(this);
+    public final godsang.backend.entity.QBaseTimeEntity _super = new godsang.backend.entity.QBaseTimeEntity(this);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createDate = _super.createDate;
@@ -36,6 +36,8 @@ public class QMember extends EntityPathBase<Member> {
     public final StringPath password = createString("password");
 
     public final StringPath phoneNumber = createString("phoneNumber");
+
+    public final StringPath role = createString("role");
 
     public final StringPath userId = createString("userId");
 

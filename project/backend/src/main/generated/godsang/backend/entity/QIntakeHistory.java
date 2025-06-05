@@ -30,7 +30,7 @@ public class QIntakeHistory extends EntityPathBase<IntakeHistory> {
 
     public final EnumPath<MealType> mealType = createEnum("mealType", MealType.class);
 
-    public final QMember member;
+    public final godsang.backend.entity.member.QMember member;
 
     public QIntakeHistory(String variable) {
         this(IntakeHistory.class, forVariable(variable), INITS);
@@ -50,7 +50,7 @@ public class QIntakeHistory extends EntityPathBase<IntakeHistory> {
 
     public QIntakeHistory(Class<? extends IntakeHistory> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.member = inits.isInitialized("member") ? new QMember(forProperty("member")) : null;
+        this.member = inits.isInitialized("member") ? new godsang.backend.entity.member.QMember(forProperty("member")) : null;
     }
 
 }

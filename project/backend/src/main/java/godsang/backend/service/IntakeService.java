@@ -5,6 +5,7 @@ import godsang.backend.entity.dto.FoodDto;
 import godsang.backend.entity.dto.IntakeRequestDto;
 import godsang.backend.entity.dto.IntakeResponseDto;
 import godsang.backend.entity.dto.RequestIIntakeHistory;
+import godsang.backend.entity.member.Member;
 import godsang.backend.exception.EntityNotFoundException;
 import godsang.backend.repository.FoodRepository;
 import godsang.backend.repository.IntakeFoodRepository;
@@ -18,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Log4j2
