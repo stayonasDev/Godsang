@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Food Entry</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5',
+                        secondary: '#10B981'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+        }
+        
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        
+        .custom-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+        
+        .custom-checkbox {
+            position: relative;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid #d1d5db;
+            background-color: white;
+            transition: all 0.2s ease;
+        }
+        
+        .custom-checkbox.checked {
+            background-color: #4F46E5;
+            border-color: #4F46E5;
+        }
+        
+        .custom-checkbox.checked::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        
+        .time-picker {
+            position: relative;
+        }
+        
+        .time-picker input {
+            cursor: pointer;
+        }
+        
+        .custom-time-picker {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 10;
+            width: 100%;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 0.5rem;
+        }
+        
+        .custom-time-picker.active {
+            display: block;
+        }
+        
+        .meal-type-btn.active {
+            background-color: #4F46E5;
+            color: white;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e5e7eb;
+            overflow: hidden;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <header class="bg-white shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button class="flex items-center text-gray-700 hover:text-primary transition-colors">
+                <div class="w-8 h-8 flex items-center justify-center mr-1">
+                    <i class="ri-arrow-left-line ri-lg"></i>
+                </div>
+                <span>Back</span>
+            </button>
+            
+            <h1 class="text-xl font-semibold text-gray-800">Edit Food Entry</h1>
+            
+            <button class="text-primary font-medium hover:text-primary/80 transition-colors">
+                Save
+            </button>
+        </div>
+    </header>
+    
+    <main class="max-w-2xl mx-auto px-4 py-6">
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <div class="flex items-start gap-4 mb-6">
+                <div class="w-20 h-20 bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                    <img src="https://readdy.ai/api/search-image?query=A%20professional%20food%20photography%20of%20a%20bowl%20of%20Greek%20yogurt%20with%20fresh%20berries%20and%20honey%2C%20on%20a%20light%20wooden%20table%2C%20soft%20natural%20lighting%2C%20high%20resolution%2C%20shallow%20depth%20of%20field&width=200&height=200&seq=1&orientation=squarish" alt="Greek Yogurt" class="w-full h-full object-cover object-top">
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-1">Greek Yogurt with Berries</h2>
+                    <div class="flex flex-wrap gap-3 text-sm text-gray-500">
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 flex items-center justify-center mr-1">
+                                <i class="ri-fire-line"></i>
+                            </div>
+                            <span>150 kcal</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 flex items-center justify-center mr-1">
+                                <i class="ri-meat-line"></i>
+                            </div>
+                            <span>15g protein</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 flex items-center justify-center mr-1">
+                                <i class="ri-bread-line"></i>
+                            </div>
+                            <span>20g carbs</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 flex items-center justify-center mr-1">
+                                <i class="ri-drop-line"></i>
+                            </div>
+                            <span>5g fat</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-100 pt-6">
+                <h3 class="text-lg font-medium text-gray-800 mb-4">Serving Size</h3>
+                
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="flex-1 relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <div class="w-5 h-5 flex items-center justify-center text-gray-400">
+                                <i class="ri-scales-3-line"></i>
+                            </div>
+                        </div>
+                        <input type="number" value="200" class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-gray-700">
+                    </div>
+                    
+                    <div class="w-24">
+                        <select class="custom-select w-full px-3 py-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-gray-700 bg-white">
+                            <option value="g">g</option>
+                            <option value="oz">oz</option>
+                            <option value="serving">serving</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex border border-gray-300 rounded overflow-hidden">
+                        <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors">
+                            <div class="w-5 h-5 flex items-center justify-center">
+                                <i class="ri-subtract-line"></i>
+                            </div>
+                        </button>
+                        <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors">
+                            <div class="w-5 h-5 flex items-center justify-center">
+                                <i class="ri-add-line"></i>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                
+                <h3 class="text-lg font-medium text-gray-800 mb-4">Meal Timing</h3>
+                
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Date</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <div class="w-5 h-5 flex items-center justify-center text-gray-400">
+                                    <i class="ri-calendar-line"></i>
+                                </div>
+                            </div>
+                            <input type="date" value="2025-05-13" class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-gray-700">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Time</label>
+                        <div class="relative time-picker">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <div class="w-5 h-5 flex items-center justify-center text-gray-400">
+                                    <i class="ri-time-line"></i>
+                                </div>
+                            </div>
+                            <input type="text" value="08:30 AM" readonly class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-gray-700">
+                            
+                            <div class="custom-time-picker">
+                                <div class="grid grid-cols-2 gap-2 mb-2">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Hour</label>
+                                        <div class="flex border border-gray-200 rounded overflow-hidden">
+                                            <button class="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors">
+                                                <div class="w-4 h-4 flex items-center justify-center">
+                                                    <i class="ri-subtract-line"></i>
+                                                </div>
+                                            </button>
+                                            <input type="number" min="1" max="12" value="8" class="w-full text-center border-none focus:ring-0 text-gray-700">
+                                            <button class="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors">
+                                                <div class="w-4 h-4 flex items-center justify-center">
+                                                    <i class="ri-add-line"></i>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Minute</label>
+                                        <div class="flex border border-gray-200 rounded overflow-hidden">
+                                            <button class="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors">
+                                                <div class="w-4 h-4 flex items-center justify-center">
+                                                    <i class="ri-subtract-line"></i>
+                                                </div>
+                                            </button>
+                                            <input type="number" min="0" max="59" value="30" class="w-full text-center border-none focus:ring-0 text-gray-700">
+                                            <button class="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors">
+                                                <div class="w-4 h-4 flex items-center justify-center">
+                                                    <i class="ri-add-line"></i>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button class="flex-1 py-1.5 bg-gray-100 rounded text-gray-700 hover:bg-gray-200 transition-colors">AM</button>
+                                    <button class="flex-1 py-1.5 bg-gray-100 rounded text-gray-700 hover:bg-gray-200 transition-colors">PM</button>
+                                </div>
+                                <div class="mt-2 flex justify-end">
+                                    <button class="px-3 py-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors">Done</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <label class="block text-sm font-medium text-gray-700 mb-3">Meal Type</label>
+                <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    <button class="meal-type-btn active py-2.5 px-4 border border-gray-300 rounded text-center text-gray-700 hover:bg-gray-50 transition-colors !rounded-button whitespace-nowrap">Breakfast</button>
+                    <button class="meal-type-btn py-2.5 px-4 border border-gray-300 rounded text-center text-gray-700 hover:bg-gray-50 transition-colors !rounded-button whitespace-nowrap">Lunch</button>
+                    <button class="meal-type-btn py-2.5 px-4 border border-gray-300 rounded text-center text-gray-700 hover:bg-gray-50 transition-colors !rounded-button whitespace-nowrap">Dinner</button>
+                    <button class="meal-type-btn py-2.5 px-4 border border-gray-300 rounded text-center text-gray-700 hover:bg-gray-50 transition-colors !rounded-button whitespace-nowrap">Snack</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <h3 class="text-lg font-medium text-gray-800 mb-4">Nutrition Summary</h3>
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="p-4 bg-gray-50 rounded-lg">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-500">Calories</span>
+                        <span class="text-lg font-semibold text-gray-800">150 kcal</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 flex items-center justify-center text-primary">
+                            <i class="ri-fire-line"></i>
+                        </div>
+                        <div class="progress-bar flex-1">
+                            <div class="progress-bar-fill bg-primary" style="width: 35%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-4 bg-gray-50 rounded-lg">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-500">Protein</span>
+                        <span class="text-lg font-semibold text-gray-800">15g</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 flex items-center justify-center text-blue-500">
+                            <i class="ri-meat-line"></i>
+                        </div>
+                        <div class="progress-bar flex-1">
+                            <div class="progress-bar-fill bg-blue-500" style="width: 60%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-4 bg-gray-50 rounded-lg">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-500">Carbs</span>
+                        <span class="text-lg font-semibold text-gray-800">20g</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 flex items-center justify-center text-amber-500">
+                            <i class="ri-bread-line"></i>
+                        </div>
+                        <div class="progress-bar flex-1">
+                            <div class="progress-bar-fill bg-amber-500" style="width: 25%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-4 bg-gray-50 rounded-lg">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-500">Fat</span>
+                        <span class="text-lg font-semibold text-gray-800">5g</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 flex items-center justify-center text-rose-500">
+                            <i class="ri-drop-line"></i>
+                        </div>
+                        <div class="progress-bar flex-1">
+                            <div class="progress-bar-fill bg-rose-500" style="width: 15%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-100 pt-4">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-sm font-medium text-gray-500">Vitamin A</span>
+                    <span class="text-sm font-medium text-gray-700">10%</span>
+                </div>
+                <div class="progress-bar mb-4">
+                    <div class="progress-bar-fill bg-green-500" style="width: 10%"></div>
+                </div>
+                
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-sm font-medium text-gray-500">Vitamin C</span>
+                    <span class="text-sm font-medium text-gray-700">25%</span>
+                </div>
+                <div class="progress-bar mb-4">
+                    <div class="progress-bar-fill bg-green-500" style="width: 25%"></div>
+                </div>
+                
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-sm font-medium text-gray-500">Calcium</span>
+                    <span class="text-sm font-medium text-gray-700">30%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill bg-green-500" style="width: 30%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="space-y-3">
+            <button class="w-full py-3.5 bg-primary text-white font-medium rounded hover:bg-primary/90 transition-colors !rounded-button whitespace-nowrap">Save Changes</button>
+            <button class="w-full py-3.5 bg-white text-red-600 font-medium border border-red-200 rounded hover:bg-red-50 transition-colors !rounded-button whitespace-nowrap">Delete Entry</button>
+        </div>
+    </main>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Time picker functionality
+            const timePickerInput = document.querySelector('.time-picker input');
+            const timePickerDropdown = document.querySelector('.custom-time-picker');
+            
+            if (timePickerInput && timePickerDropdown) {
+                timePickerInput.addEventListener('click', function() {
+                    timePickerDropdown.classList.toggle('active');
+                });
+                
+                const doneButton = timePickerDropdown.querySelector('button:last-child');
+                if (doneButton) {
+                    doneButton.addEventListener('click', function() {
+                        timePickerDropdown.classList.remove('active');
+                    });
+                }
+            }
+            
+            // Meal type buttons
+            const mealTypeButtons = document.querySelectorAll('.meal-type-btn');
+            
+            mealTypeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    mealTypeButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Increment/decrement buttons for serving size
+            const servingSizeInput = document.querySelector('input[type="number"]');
+            const decrementButton = document.querySelector('.ri-subtract-line').closest('button');
+            const incrementButton = document.querySelector('.ri-add-line').closest('button');
+            
+            if (servingSizeInput && decrementButton && incrementButton) {
+                decrementButton.addEventListener('click', function() {
+                    if (servingSizeInput.value > 0) {
+                        servingSizeInput.value = parseInt(servingSizeInput.value) - 1;
+                    }
+                });
+                
+                incrementButton.addEventListener('click', function() {
+                    servingSizeInput.value = parseInt(servingSizeInput.value) + 1;
+                });
+            }
+            
+            // Time picker hour/minute controls
+            const hourInput = document.querySelector('.custom-time-picker input[min="1"]');
+            const minuteInput = document.querySelector('.custom-time-picker input[min="0"]');
+            
+            if (hourInput) {
+                const hourDecrement = hourInput.previousElementSibling;
+                const hourIncrement = hourInput.nextElementSibling;
+                
+                hourDecrement.addEventListener('click', function() {
+                    let value = parseInt(hourInput.value);
+                    value = value <= 1 ? 12 : value - 1;
+                    hourInput.value = value;
+                });
+                
+                hourIncrement.addEventListener('click', function() {
+                    let value = parseInt(hourInput.value);
+                    value = value >= 12 ? 1 : value + 1;
+                    hourInput.value = value;
+                });
+            }
+            
+            if (minuteInput) {
+                const minuteDecrement = minuteInput.previousElementSibling;
+                const minuteIncrement = minuteInput.nextElementSibling;
+                
+                minuteDecrement.addEventListener('click', function() {
+                    let value = parseInt(minuteInput.value);
+                    value = value <= 0 ? 55 : value - 5;
+                    minuteInput.value = value;
+                });
+                
+                minuteIncrement.addEventListener('click', function() {
+                    let value = parseInt(minuteInput.value);
+                    value = value >= 55 ? 0 : value + 5;
+                    minuteInput.value = value;
+                });
+            }
+            
+            // AM/PM toggle
+            const amPmButtons = document.querySelectorAll('.custom-time-picker .flex.gap-2 button');
+            
+            if (amPmButtons.length === 2) {
+                amPmButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        amPmButtons.forEach(btn => {
+                            btn.classList.remove('bg-primary', 'text-white');
+                            btn.classList.add('bg-gray-100', 'text-gray-700');
+                        });
+                        
+                        this.classList.remove('bg-gray-100', 'text-gray-700');
+                        this.classList.add('bg-primary', 'text-white');
+                    });
+                });
+                
+                // Set AM as active by default
+                amPmButtons[0].classList.remove('bg-gray-100', 'text-gray-700');
+                amPmButtons[0].classList.add('bg-primary', 'text-white');
+            }
+        });
+    </script>
+</body>
+</html>
