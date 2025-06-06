@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NutriTrack - Food Tracker</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#6366f1',secondary:'#a5b4fc'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+background-color: #f9fafb;
+}
+input:focus {
+outline: none;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+</style>
+</head>
+<body class="min-h-screen">
+<header class="w-full py-4 px-6 bg-white shadow-sm flex justify-between items-center">
+<div class="text-primary text-2xl font-['Pacifico']">NutriTrack</div>
+<div class="flex items-center gap-6">
+<a href="#" class="text-gray-600 hover:text-primary flex items-center gap-1">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-history-line"></i>
+</div>
+<span>History</span>
+</a>
+<a href="#" class="text-gray-600 hover:text-primary flex items-center gap-1">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-user-line"></i>
+</div>
+<span>Profile</span>
+</a>
+</div>
+</header>
+<main class="container mx-auto px-4 py-6 max-w-6xl">
+<div class="flex justify-center mb-6">
+<div class="inline-flex bg-gray-100 rounded-full p-1">
+<button class="bg-primary text-white px-4 py-2 rounded-full whitespace-nowrap !rounded-button">Recent</button>
+<button class="text-gray-600 px-4 py-2 rounded-full whitespace-nowrap !rounded-button">Favorites</button>
+<button class="text-gray-600 px-4 py-2 rounded-full whitespace-nowrap !rounded-button">All Foods</button>
+<button class="text-gray-600 px-4 py-2 rounded-full whitespace-nowrap !rounded-button">Breakfast</button>
+<button class="text-gray-600 px-4 py-2 rounded-full whitespace-nowrap !rounded-button">Lunch</button>
+<button class="text-gray-600 px-4 py-2 rounded-full whitespace-nowrap !rounded-button">Dinner</button>
+<button class="text-gray-600 px-4 py-2 rounded-full whitespace-nowrap !rounded-button">Snacks</button>
+</div>
+</div>
+<div class="relative mb-6">
+  <div class="flex items-center bg-white rounded-lg shadow-sm">
+    <div class="w-10 h-10 flex items-center justify-center text-gray-500">
+      <i class="ri-search-line text-lg"></i>
+    </div>
+    <input type="text" placeholder="Search foods, meals or nutrients..." class="w-full h-10 text-sm bg-transparent border-none focus:ring-0 text-gray-700">
+    <button class="px-4 h-10 bg-primary text-white rounded-r-lg !rounded-button whitespace-nowrap">Search</button>
+  </div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<h2 class="text-xl font-semibold mb-4">Search Results</h2>
+<div class="space-y-4">
+<div class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+<img src="https://readdy.ai/api/search-image?query=grilled%20chicken%20breast%20on%20a%20white%20plate%2C%20professional%20food%20photography%2C%20high%20quality%2C%20detailed%20texture&width=80&height=80&seq=1&orientation=squarish" alt="Grilled Chicken Breast" class="w-16 h-16 rounded-lg object-cover object-top">
+<div class="ml-4 flex-1">
+<h3 class="font-medium">Grilled Chicken Breast</h3>
+<p class="text-sm text-gray-600">165 kcal · 31g protein · 3.6g fat</p>
+</div>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-primary hover:text-white rounded-full transition">
+<i class="ri-add-line"></i>
+</button>
+</div>
+<div class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+<img src="https://readdy.ai/api/search-image?query=avocado%20toast%20on%20whole%20grain%20bread%2C%20professional%20food%20photography%2C%20high%20quality%2C%20detailed%20texture&width=80&height=80&seq=2&orientation=squarish" alt="Avocado Toast" class="w-16 h-16 rounded-lg object-cover object-top">
+<div class="ml-4 flex-1">
+<h3 class="font-medium">Avocado Toast</h3>
+<p class="text-sm text-gray-600">290 kcal · 8g protein · 14g fat</p>
+</div>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-primary hover:text-white rounded-full transition">
+<i class="ri-add-line"></i>
+</button>
+</div>
+<div class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+<img src="https://readdy.ai/api/search-image?query=greek%20yogurt%20with%20fresh%20berries%2C%20professional%20food%20photography%2C%20high%20quality%2C%20detailed%20texture&width=80&height=80&seq=3&orientation=squarish" alt="Greek Yogurt with Berries" class="w-16 h-16 rounded-lg object-cover object-top">
+<div class="ml-4 flex-1">
+<h3 class="font-medium">Greek Yogurt with Berries</h3>
+<p class="text-sm text-gray-600">145 kcal · 15g protein · 4g fat</p>
+</div>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-primary hover:text-white rounded-full transition">
+<i class="ri-add-line"></i>
+</button>
+</div>
+<div class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+<img src="https://readdy.ai/api/search-image?query=quinoa%20salad%20with%20vegetables%2C%20professional%20food%20photography%2C%20high%20quality%2C%20detailed%20texture&width=80&height=80&seq=4&orientation=squarish" alt="Quinoa Salad" class="w-16 h-16 rounded-lg object-cover object-top">
+<div class="ml-4 flex-1">
+<h3 class="font-medium">Quinoa Salad</h3>
+<p class="text-sm text-gray-600">220 kcal · 6g protein · 9g fat</p>
+</div>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-primary hover:text-white rounded-full transition">
+<i class="ri-add-line"></i>
+</button>
+</div>
+<div class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+<img src="https://readdy.ai/api/search-image?query=salmon%20fillet%20grilled%2C%20professional%20food%20photography%2C%20high%20quality%2C%20detailed%20texture&width=80&height=80&seq=5&orientation=squarish" alt="Salmon Fillet" class="w-16 h-16 rounded-lg object-cover object-top">
+<div class="ml-4 flex-1">
+<h3 class="font-medium">Salmon Fillet</h3>
+<p class="text-sm text-gray-600">280 kcal · 25g protein · 18g fat</p>
+</div>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-primary hover:text-white rounded-full transition">
+<i class="ri-add-line"></i>
+</button>
+</div>
+</div>
+</div>
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<h2 class="text-xl font-semibold mb-2">Nutritional Information</h2>
+<h3 class="text-lg font-medium mb-1">Grilled Chicken Breast</h3>
+<p class="text-sm text-gray-500 mb-6">Per 100g serving</p>
+<div class="grid grid-cols-4 gap-4 mb-8">
+<div class="text-center">
+<p class="text-2xl font-bold text-primary">165</p>
+<p class="text-sm text-gray-500">calories</p>
+</div>
+<div class="text-center">
+<p class="text-2xl font-bold text-primary">31g</p>
+<p class="text-sm text-gray-500">protein</p>
+</div>
+<div class="text-center">
+<p class="text-2xl font-bold text-primary">0g</p>
+<p class="text-sm text-gray-500">carbs</p>
+</div>
+<div class="text-center">
+<p class="text-2xl font-bold text-primary">3.6g</p>
+<p class="text-sm text-gray-500">fat</p>
+</div>
+</div>
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">Serving Size</label>
+<div class="flex items-center">
+<button class="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-l-lg !rounded-button">
+<i class="ri-subtract-line"></i>
+</button>
+<input type="number" value="100" class="w-16 h-8 text-center border-none bg-gray-100" />
+<button class="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-r-lg !rounded-button">
+<i class="ri-add-line"></i>
+</button>
+<div class="relative ml-2">
+<select class="appearance-none bg-gray-100 border-none rounded-lg py-2 pl-3 pr-8 text-gray-700">
+<option>g</option>
+<option>oz</option>
+<option>serving</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-3 mb-6">
+<div class="flex justify-between items-center">
+<span class="text-gray-700">Saturated Fat</span>
+<span class="font-medium">1.1g</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-gray-700">Cholesterol</span>
+<span class="font-medium">85mg</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-gray-700">Sodium</span>
+<span class="font-medium">74mg</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-gray-700">Potassium</span>
+<span class="font-medium">256mg</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-gray-700">Vitamin B6</span>
+<span class="font-medium">0.6mg</span>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Add to Meal</label>
+<div class="relative">
+<select class="w-full appearance-none bg-white border border-gray-300 rounded-lg py-2 px-3 text-gray-700 !rounded-button">
+<option>Dinner</option>
+<option>Breakfast</option>
+<option>Lunch</option>
+<option>Snack</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-3 px-6 flex justify-between items-center">
+<div class="flex items-center gap-4">
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full">
+<i class="ri-arrow-left-s-line"></i>
+</button>
+<span class="bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-full text-sm">V1</span>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full">
+<i class="ri-arrow-right-s-line"></i>
+</button>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full">
+<i class="ri-fullscreen-line"></i>
+</button>
+<button class="flex items-center gap-1 bg-primary text-white px-4 py-2 rounded-lg !rounded-button">
+<i class="ri-download-line"></i>
+<span>Export</span>
+</button>
+<button class="flex items-center gap-1 bg-white border border-gray-300 px-4 py-2 rounded-lg !rounded-button">
+<i class="ri-share-line"></i>
+<span>Share</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full">
+<i class="ri-sun-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full">
+<i class="ri-layout-grid-line"></i>
+</button>
+<button class="flex items-center gap-1 bg-white border border-gray-300 px-4 py-2 rounded-lg !rounded-button">
+<i class="ri-code-line"></i>
+<span>Code</span>
+</button>
+</div>
+</footer>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+const minusBtn = document.querySelector('button:has(.ri-subtract-line)');
+const plusBtn = document.querySelector('button:has(.ri-add-line)');
+const servingInput = document.querySelector('input[type="number"]');
+minusBtn.addEventListener('click', function() {
+if (parseInt(servingInput.value) > 1) {
+servingInput.value = parseInt(servingInput.value) - 1;
+}
+});
+plusBtn.addEventListener('click', function() {
+servingInput.value = parseInt(servingInput.value) + 1;
+});
+});
+</script>
+</body>
+</html>

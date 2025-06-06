@@ -1,0 +1,102 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Routine &amp; Diet Planner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+    <link href="https://ai-public.creatie.ai/gen_page/tailwind-custom.css" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
+    <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000" data-border-radius="small"></script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <nav class="bg-white shadow">
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <img class="h-8 w-auto" src="https://ai-public.creatie.ai/gen_page/logo_placeholder.png" alt="Logo"/>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="#" class="border-custom text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Calendar</a>
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Routines</a>
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Diet</a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <button type="button" class="!rounded-button bg-custom p-2 text-white shadow-sm hover:bg-custom/90">
+                        <i class="fas fa-plus mr-2"></i>New Routine
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <main class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-semibold text-gray-900">Calendar Schedule</h2>
+                <div class="flex space-x-4">
+                    <button class="!rounded-button p-2 text-gray-600 hover:bg-gray-100">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="!rounded-button p-2 text-gray-600 hover:bg-gray-100">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-7 gap-px bg-gray-200 text-sm">
+                <div class="bg-gray-50 p-2 text-gray-500 text-center font-medium">Sun</div>
+                <div class="bg-gray-50 p-2 text-gray-900 text-center font-medium">Mon</div>
+                <div class="bg-gray-50 p-2 text-gray-900 text-center font-medium">Tue</div>
+                <div class="bg-gray-50 p-2 text-gray-900 text-center font-medium">Wed</div>
+                <div class="bg-gray-50 p-2 text-gray-900 text-center font-medium">Thu</div>
+                <div class="bg-gray-50 p-2 text-gray-900 text-center font-medium">Fri</div>
+                <div class="bg-gray-50 p-2 text-gray-500 text-center font-medium">Sat</div>
+            </div>
+            
+            <div class="grid grid-cols-7 gap-px bg-gray-200"><div class="bg-white p-4 min-h-[100px] text-gray-400">27</div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer">28</div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer">29</div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer">30</div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer">31</div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer">1</div><div class="bg-white p-4 min-h-[100px] text-gray-400">2</div><div class="bg-white p-4 min-h-[100px] text-gray-400">3</div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer relative">4<div class="absolute bottom-2 left-2 right-2"><div class="bg-blue-100 text-blue-800 text-xs rounded px-2 py-1 mb-1">Meal Time: 6:00 AM</div><div class="bg-green-100 text-green-800 text-xs rounded px-2 py-1 mb-1">Meal Time: 12:30 PM</div><div class="bg-gray-100 text-gray-800 text-xs rounded px-2 py-1">280 cal</div></div></div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer">5</div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer relative">6<div class="absolute bottom-2 left-2 right-2"><div class="bg-purple-100 text-purple-800 text-xs rounded px-2 py-1 mb-1">Meal Time: 6:00 PM</div><div class="bg-gray-100 text-gray-800 text-xs rounded px-2 py-1">320 cal</div></div></div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer relative">7<div class="absolute bottom-2 left-2 right-2"><div class="bg-yellow-100 text-yellow-800 text-xs rounded px-2 py-1 mb-1">Meal Time: 3:00 PM</div><div class="bg-gray-100 text-gray-800 text-xs rounded px-2 py-1">180 cal</div></div></div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer">8</div><div class="bg-white p-4 min-h-[100px] text-gray-400">9</div><div class="bg-white p-4 min-h-[100px] text-gray-400">10</div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer relative">11<div class="absolute bottom-2 left-2 right-2"><div class="bg-red-100 text-red-800 text-xs rounded px-2 py-1 mb-1">Meal Time: 11:00 AM</div><div class="bg-gray-100 text-gray-800 text-xs rounded px-2 py-1">450 cal</div></div></div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer">12</div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer relative">13<div class="absolute bottom-2 left-2 right-2"><div class="bg-blue-100 text-blue-800 text-xs rounded px-2 py-1 mb-1">Meal Time: 2:00 PM</div><div class="bg-gray-100 text-gray-800 text-xs rounded px-2 py-1">340 cal</div></div></div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer">14</div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer">15</div><div class="bg-white p-4 min-h-[100px] text-gray-400">16</div><div class="bg-white p-4 min-h-[100px] text-gray-400">17</div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer relative">18<div class="absolute bottom-2 left-2 right-2"><div class="bg-green-100 text-green-800 text-xs rounded px-2 py-1 mb-1">Meal Time: 1:00 PM</div><div class="bg-gray-100 text-gray-800 text-xs rounded px-2 py-1">220 cal</div></div></div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer">19</div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer">20</div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer relative">21<div class="absolute bottom-2 left-2 right-2"><div class="bg-orange-100 text-orange-800 text-xs rounded px-2 py-1 mb-1">Meal Time: 7:00 PM</div><div class="bg-gray-100 text-gray-800 text-xs rounded px-2 py-1">380 cal</div></div></div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer">22</div><div class="bg-white p-4 min-h-[100px] text-gray-400">23</div><div class="bg-white p-4 min-h-[100px] text-gray-400">24</div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer">25</div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer relative">26<div class="absolute bottom-2 left-2 right-2"><div class="bg-pink-100 text-pink-800 text-xs rounded px-2 py-1 mb-1">Meal Time: 5:30 PM</div><div class="bg-gray-100 text-gray-800 text-xs rounded px-2 py-1">260 cal</div></div></div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer">27</div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer">28</div><div class="bg-white p-4 min-h-[100px] text-gray-900 hover:bg-gray-50 cursor-pointer">29</div><div class="bg-white p-4 min-h-[100px] text-gray-400">30</div><div class="bg-white p-4 min-h-[100px] text-gray-400">31</div></div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Today&#39;s Menu</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <div class="w-4 h-4 rounded-full bg-blue-500 mr-4"></div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <h4 class="text-sm font-medium text-gray-900">Bruschetta</h4>
+                                <span class="text-sm text-gray-500">6:00 AM</span>
+                            </div>
+                            <p class="text-sm text-gray-500">Toasted bread with tomatoes and herbs</p>
+                        </div>
+                        <div class="ml-4">
+                            <input type="checkbox" class="h-4 w-4 text-custom border-gray-300 focus:ring-custom"/>
+                        </div>
+                    </div>
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <div class="w-4 h-4 rounded-full bg-green-500 mr-4"></div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <h4 class="text-sm font-medium text-gray-900">Spring Rolls</h4>
+                                <span class="text-sm text-gray-500">12:30 PM</span>
+                            </div>
+                            <p class="text-sm text-gray-500">Fresh vegetables with sweet chili sauce</p>
+                        </div>
+                        <div class="ml-4">
+                            <input type="checkbox" class="h-4 w-4 text-custom border-gray-300 focus:ring-custom"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6"><h3 class="text-lg font-medium text-gray-900 mb-4">Nutrition Progress</h3><div class="space-y-6"><div class="bg-gray-50 p-4 rounded-lg"><div class="flex justify-between items-center mb-4"><h4 class="text-sm font-medium text-gray-900">Daily Progress</h4><select class="text-sm border-gray-300 focus:border-custom focus:ring-custom !rounded-button"><option>Daily</option><option>Weekly</option><option>Monthly</option></select></div><div class="space-y-4"><div class="relative pt-1"><div class="flex justify-between items-center mb-2"><span class="text-xs font-medium text-gray-700">Water (2.5L/3L)</span><span class="text-xs font-medium text-gray-700">83%</span></div><div class="overflow-hidden h-2 text-xs flex rounded bg-blue-100"><div class="w-[83%] shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"></div></div></div><div class="relative pt-1"><div class="flex justify-between items-center mb-2"><span class="text-xs font-medium text-gray-700">Protein (45g/65g)</span><span class="text-xs font-medium text-gray-700">69%</span></div><div class="overflow-hidden h-2 text-xs flex rounded bg-green-100"><div class="w-[69%] shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div></div></div><div class="relative pt-1"><div class="flex justify-between items-center mb-2"><span class="text-xs font-medium text-gray-700">Carbs (120g/150g)</span><span class="text-xs font-medium text-gray-700">80%</span></div><div class="overflow-hidden h-2 text-xs flex rounded bg-yellow-100"><div class="w-[80%] shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-yellow-500"></div></div></div><div class="relative pt-1"><div class="flex justify-between items-center mb-2"><span class="text-xs font-medium text-gray-700">Fat (45g/65g)</span><span class="text-xs font-medium text-gray-700">69%</span></div><div class="overflow-hidden h-2 text-xs flex rounded bg-red-100"><div class="w-[69%] shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-red-500"></div></div></div></div></div><div class="mt-4"><button class="w-full !rounded-button bg-custom p-2 text-white shadow-sm hover:bg-custom/90">Register Diet Details</button></div></div></div>
+        </div>
+    </main>
+    <footer class="bg-white border-t mt-8">
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="text-center text-sm text-gray-500">
+                © 2023 Routine &amp; Diet Planner. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+
