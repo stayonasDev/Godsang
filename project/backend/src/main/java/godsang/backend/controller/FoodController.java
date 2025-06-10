@@ -29,6 +29,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Log4j2
 @RequestMapping("/godsang/food")
+//@CrossOrigin(value = "http://localhost:5173")
+@CrossOrigin(origins ="*")
 public class FoodController {
 
     private final FoodService foodService;
@@ -38,6 +40,7 @@ public class FoodController {
     @GetMapping("/foodList")
     public ResponseEntity<Page<FoodDto>> foodList(@RequestParam(name = "foodName", required = false)
                                                       String foodName, @Validated PageRequestDto pageRequestDto) {
+        log.info("foodName = {}", foodName);
         return ResponseEntity.ok(foodService.foodList(foodName, pageRequestDto));
     }
 

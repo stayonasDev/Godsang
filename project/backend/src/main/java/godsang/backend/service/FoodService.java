@@ -43,6 +43,7 @@ public class FoodService {
     }
 
     public Page<FoodDto> foodList(String foodName, PageRequestDto pageDto) {
+        log.info("Vue 요청 받음");
         Optional<Food> foodFind = foodRepository.findFirstByNameContaining(foodName);
 
         Food food = foodFind.orElseThrow(() ->
@@ -50,6 +51,7 @@ public class FoodService {
 
         Sort sort = Sort.by("fo_id").descending();
         Pageable pageable = pageDto.getPageable(sort);
+        log.info("Vue 요청 반환: ");
         return foodRepository.searchOneFoodName(pageable, foodName);
     }
 
