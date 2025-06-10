@@ -316,7 +316,7 @@
         <form @submit.prevent="saveNutrition">
           <div v-for="nutrient in nutritionProgress" :key="nutrient.name" class="mb-4">
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              {{ nutrient.name }} ({{ nutrient.unit }})
+              {{ nutrient.name }} {{ nutrient.unit }}
             </label>
             <input
               v-model.number="nutrient.current"
@@ -347,216 +347,247 @@
 </template>
 
 <script setup>
-createApp({
-  data() {
-    return {
-      activeTab: 'calendar',
-      currentDate: new Date(),
-      weekDays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-      showEventModal: false,
-      showFoodModal: false,
-      showNutritionModal: false,
-      progressView: 'daily',
-      events: [
-        {
-          id: 1,
-          type: 'meal',
-          title: 'Breakfast',
-          date: '2024-06-04',
-          time: '06:00',
-          description: 'Healthy breakfast',
-        },
-      ],
-      meals: [
-        {
-          id: 1,
-          name: 'Bruschetta',
-          type: 'breakfast',
-          time: '06:00',
-          description: 'Toasted bread with tomatoes and herbs',
-          calories: 280,
-          date: new Date().toISOString().split('T')[0],
-          completed: false,
-        },
-      ],
-      nutritionProgress: [
-        { name: 'Water', current: 2.5, target: 3, unit: 'L', color: 'blue' },
-        { name: 'Protein', current: 45, target: 65, unit: 'g', color: 'green' },
-        { name: 'Carbs', current: 120, target: 150, unit: 'g', color: 'yellow' },
-        { name: 'Fat', current: 45, target: 65, unit: 'g', color: 'red' },
-      ],
-      newEvent: {
-        type: 'routine',
-        title: '',
-        date: '',
-        time: '',
-        description: '',
-      },
-      newFood: {
-        name: '',
-        type: 'breakfast',
-        time: '',
-        calories: 0,
-        description: '',
-      },
-    }
-  },
-  computed: {
-    currentMonthYear() {
-      return this.currentDate.toLocaleDateString('en-US', {
-        month: 'long',
-        year: 'numeric',
-      })
-    },
-    calendarDates() {
-      const year = this.currentDate.getFullYear()
-      const month = this.currentDate.getMonth()
-      const firstDay = new Date(year, month, 1)
-      const lastDay = new Date(year, month + 1, 0)
-      const startDate = new Date(firstDay)
-      startDate.setDate(startDate.getDate() - firstDay.getDay())
+import { ref, computed, onMounted, watch } from 'vue'
 
-      const dates = []
-      const currentDate = new Date(startDate)
+const activeTab = ref('calaendar')
+const currentDate = ref(new Date())
+const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const showEventModal = ref(false)
+const showFoodModal = ref(false)
+const showNutritionModal = ref(false)
+const progressView = ref('daily')
 
-      for (let i = 0; i < 42; i++) {
-        dates.push({
-          day: currentDate.getDate(),
-          month: currentDate.getMonth(),
-          year: currentDate.getFullYear(),
-          isCurrentMonth: currentDate.getMonth() === month,
-          fullDate: new Date(currentDate),
-        })
-        currentDate.setDate(currentDate.getDate() + 1)
-      }
+const events = ref([
+  {
+    id: 1,
+    type: 'meal',
+    title: 'Breakfast',
+    date: '2024-06-04',
+    time: '06:00',
+    description: 'Healthy breakfast',
+  },
+])
 
-      return dates
-    },
-    todaysMeals() {
-      const today = new Date().toISOString().split('T')[0]
-      return this.meals.filter((meal) => meal.date === today)
-    },
+const meals = ref([
+  {
+    id: 1,
+    name: 'Bruschetta',
+    type: 'breakfast',
+    time: '06:00',
+    description: 'Toasted bread with tomatoes and herbs',
+    calories: 280,
+    date: new Date().toISOString().split('T')[0],
+    completed: false,
   },
-  methods: {
-    previousMonth() {
-      this.currentDate = new Date(
-        this.currentDate.getFullYear(),
-        this.currentDate.getMonth() - 1,
-        1,
-      )
-    },
-    nextMonth() {
-      this.currentDate = new Date(
-        this.currentDate.getFullYear(),
-        this.currentDate.getMonth() + 1,
-        1,
-      )
-    },
-    selectDate(date) {
-      this.newEvent.date = `${date.year}-${String(date.month + 1).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`
-      this.showEventModal = true
-    },
-    getEventsForDate(date) {
-      const dateStr = `${date.year}-${String(date.month + 1).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`
-      return this.events.filter((event) => event.date === dateStr)
-    },
-    getEventColorClass(type) {
-      const colors = {
-        meal: 'bg-blue-100 text-blue-800',
-        routine: 'bg-green-100 text-green-800',
-        exercise: 'bg-red-100 text-red-800',
-        appointment: 'bg-purple-100 text-purple-800',
-      }
-      return colors[type] || 'bg-gray-100 text-gray-800'
-    },
-    getMealColorClass(type) {
-      const colors = {
-        breakfast: 'bg-blue-500',
-        lunch: 'bg-green-500',
-        dinner: 'bg-orange-500',
-        snack: 'bg-purple-500',
-      }
-      return colors[type] || 'bg-gray-500'
-    },
-    closeEventModal() {
-      this.showEventModal = false
-      this.resetNewEvent()
-    },
-    closeFoodModal() {
-      this.showFoodModal = false
-      this.resetNewFood()
-    },
-    closeNutritionModal() {
-      this.showNutritionModal = false
-    },
-    resetNewEvent() {
-      this.newEvent = {
-        type: 'routine',
-        title: '',
-        date: '',
-        time: '',
-        description: '',
-      }
-    },
-    resetNewFood() {
-      this.newFood = {
-        name: '',
-        type: 'breakfast',
-        time: '',
-        calories: 0,
-        description: '',
-      }
-    },
-    saveEvent() {
-      const newEvent = {
-        id: Date.now(),
-        ...this.newEvent,
-      }
-      this.events.push(newEvent)
-      this.closeEventModal()
-    },
-    saveFood() {
-      const newMeal = {
-        id: Date.now(),
-        name: this.newFood.name,
-        type: this.newFood.type,
-        time: this.newFood.time,
-        description: this.newFood.description,
-        calories: this.newFood.calories,
-        date: new Date().toISOString().split('T')[0],
-        completed: false,
-      }
-      this.meals.push(newMeal)
-      this.closeFoodModal()
-    },
-    saveNutrition() {
-      // Update nutrition progress percentages
-      this.nutritionProgress.forEach((nutrient) => {
-        nutrient.percentage = Math.round((nutrient.current / nutrient.target) * 100)
-      })
-      this.closeNutritionModal()
-    },
-  },
-  watch: {
-    nutritionProgress: {
-      handler(newVal) {
-        newVal.forEach((nutrient) => {
-          nutrient.percentage = Math.round((nutrient.current / nutrient.target) * 100)
-        })
-      },
-      deep: true,
-    },
-  },
-  mounted() {
-    // Initialize nutrition percentages
-    this.nutritionProgress.forEach((nutrient) => {
+])
+
+const nutritionProgress = ref([
+  { name: 'Water', current: 2.5, target: 3, unit: 'L', color: 'blue' },
+  { name: 'Protein', current: 45, target: 65, unit: 'g', color: 'green' },
+  { name: 'Carbs', current: 120, target: 150, unit: 'g', color: 'yellow' },
+  { name: 'Fat', current: 45, target: 65, unit: 'g', color: 'red' },
+])
+
+const newEvent = ref({
+  type: 'routine',
+  title: '',
+  date: '',
+  time: '',
+  description: '',
+})
+
+const newFood = ref({
+  name: '',
+  type: 'breakfast',
+  time: '',
+  calories: 0,
+  description: '',
+})
+
+const currentMonthYear = computed(() => {
+  return currentDate.value.toLocaleDateString('en-US', {
+    month: 'long',
+    year: 'numeric',
+  })
+})
+
+const calendarDates = computed(() => {
+  // currentDate ref의 값에 접근할 때 .value를 사용합니다.
+  const year = currentDate.value.getFullYear()
+  const month = currentDate.value.getMonth()
+  const firstDay = new Date(year, month, 1)
+  const lastDay = new Date(year, month + 1, 0)
+  const startDate = new Date(firstDay)
+  startDate.setDate(startDate.getDate() - firstDay.getDay())
+
+  const dates = []
+  const current = new Date(startDate) // 변수 이름 충돌 방지를 위해 다른 이름 사용
+
+  for (let i = 0; i < 42; i++) {
+    dates.push({
+      day: current.getDate(),
+      month: current.getMonth(),
+      year: current.getFullYear(),
+      isCurrentMonth: current.getMonth() === month,
+      fullDate: new Date(current),
+    })
+    current.setDate(current.getDate() + 1)
+  }
+
+  return dates
+})
+
+const todaysMeals = computed(() => {
+  const today = new Date().toISOString().split('T')[0]
+  return meals.value.filter((meal) => meal.date === today)
+})
+
+const previousMonth = () => {
+  currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() - 1, 1)
+}
+
+const nextMonth = () => {
+  // currentDate ref의 값을 변경할 때 .value를 사용합니다.
+  currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() + 1, 1)
+}
+
+const selectDate = (date) => {
+  // newEvent 및 showEventModal ref의 값을 변경할 때 .value를 사용합니다.
+  newEvent.value.date = `${date.year}-${String(date.month + 1).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`
+  showEventModal.value = true
+}
+
+const getEventsForDate = (date) => {
+  const dateStr = `${date.year}-${String(date.month + 1).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`
+  return events.value.filter((event) => event.date === dateStr)
+}
+
+const getEventColorClass = (type) => {
+  const colors = {
+    meal: 'bg-blue-100 text-blue-800',
+    routine: 'bg-green-100 text-green-800',
+    exercise: 'bg-red-100 text-red-800',
+    appointment: 'bg-purple-100 text-purple-800',
+  }
+  // 타입에 해당하는 클래스를 반환하거나, 없을 경우 기본값 반환
+  return colors[type] || 'bg-gray-100 text-gray-800'
+}
+
+const getMealColorClass = (type) => {
+  const colors = {
+    breakfast: 'bg-blue-500',
+    lunch: 'bg-green-500',
+    dinner: 'bg-orange-500',
+    snack: 'bg-purple-500',
+  }
+  // 타입에 해당하는 클래스를 반환하거나, 없을 경우 기본값 반환
+  return colors[type] || 'bg-gray-500'
+}
+
+const closeEventModal = () => {
+  showEventModal.value = false
+  resetNewEvent()
+}
+
+const closeFoodModal = () => {
+  showFoodModal.value = false
+  resetNewFood()
+}
+
+const closeNutritionModal = () => {
+  showNutritionModal.value = false
+}
+
+const resetNewEvent = () => {
+  // newEvent ref의 값을 변경할 때 .value를 사용합니다.
+  newEvent.value = {
+    type: 'routine',
+    title: '',
+    date: '',
+    time: '',
+    description: '',
+  }
+}
+
+const resetNewFood = () => {
+  // newFood ref의 값을 변경할 때 .value를 사용합니다.
+  newFood.value = {
+    name: '',
+    type: 'breakfast',
+    time: '',
+    calories: 0,
+    description: '',
+  }
+}
+
+const saveEvent = () => {
+  const newEventData = {
+    // 변수 이름 충돌 방지를 위해 newEventData 사용
+    id: Date.now(),
+    // newEvent ref의 값에 접근할 때 .value를 사용합니다.
+    ...newEvent.value,
+  }
+  // events ref의 값(배열)에 접근할 때 .value를 사용하고 push 합니다.
+  events.value.push(newEventData)
+  // closeEventModal 함수 호출
+  closeEventModal()
+}
+
+const saveFood = () => {
+  const newMealData = {
+    // 변수 이름 충돌 방지를 위해 newMealData 사용
+    id: Date.now(),
+    // newFood ref의 값에 접근할 때 .value를 사용합니다.
+    name: newFood.value.name,
+    type: newFood.value.type,
+    time: newFood.value.time,
+    description: newFood.value.description,
+    calories: newFood.value.calories,
+    date: new Date().toISOString().split('T')[0],
+    completed: false,
+  }
+  // meals ref의 값(배열)에 접근할 때 .value를 사용하고 push 합니다.
+  meals.value.push(newMealData)
+  // closeFoodModal 함수 호출
+  closeFoodModal()
+}
+
+const saveNutrition = () => {
+  // nutritionProgress ref의 값(배열)에 접근할 때 .value를 사용합니다.
+  nutritionProgress.value.forEach((nutrient) => {
+    // nutrient 객체 자체는 반응형이므로 .value 없이 속성 접근
+    nutrient.percentage = Math.round((nutrient.current / nutrient.target) * 100)
+  })
+  // closeNutritionModal 함수 호출
+  closeNutritionModal()
+}
+
+// 감시자 선언
+// 첫 번째 인자는 감시할 소스(ref, reactive, computed 등), 두 번째 인자는 콜백 함수
+// 세 번째 인자는 옵션 객체 ({ deep: true, immediate: true } 등)
+watch(
+  // 감시할 소스: 값 (배열) 전체
+  nutritionProgress,
+  // 콜백 함수: newVal은 nutritionProgress.value의 새로운 값
+  (newVal) => {
+    newVal.forEach((nutrient) => {
       nutrient.percentage = Math.round((nutrient.current / nutrient.target) * 100)
     })
-
-    // Set default date for new events to today
-    this.newEvent.date = new Date().toISOString().split('T')[0]
   },
-}).mount('#app')
+  // 옵션: deep: true는 객체/배열 내부의 변화까지 감지
+  { deep: true },
+)
+
+// --- mounted 훅 변환 --- 마운트 후 실행될 로직을 등록
+onMounted(() => {
+  console.log('Component mounted!')
+
+  nutritionProgress.value.forEach((nutrient) => {
+    // nutrient 객체 자체는 반응형이므로 .value 없이 속성 접근
+    nutrient.percentage = Math.round((nutrient.current / nutrient.target) * 100)
+  })
+  newEvent.value.date = new Date().toISOString().split('T')[0]
+})
 </script>
 
 <style>
