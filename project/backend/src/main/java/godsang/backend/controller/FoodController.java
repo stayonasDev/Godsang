@@ -29,13 +29,18 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Log4j2
 @RequestMapping("/godsang/food")
-//@CrossOrigin(value = "http://localhost:5173")
-@CrossOrigin(origins ="*")
+@CrossOrigin(origins = "http://localhost:5173")
+//@CrossOrigin(origins ="*")
 public class FoodController {
 
     private final FoodService foodService;
     private final IntakeService intakeService;
 
+
+    @GetMapping("/awsTest")
+    public String aswTest(){
+        return "Test Completed";
+    }
     @Operation(summary = "음식 이름으로 검색", description = "ID 내림차순 결과로 페이징을 가져옴 최신순")
     @GetMapping("/foodList")
     public ResponseEntity<Page<FoodDto>> foodList(@RequestParam(name = "foodName", required = false)
