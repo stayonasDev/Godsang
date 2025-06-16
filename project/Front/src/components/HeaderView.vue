@@ -8,7 +8,7 @@
         </div>
         <span>History</span>
       </a>
-      <router-link to="/testFood">testFood</router-link>
+      <router-link to="/SearchFood">testFood</router-link>
 
       <a href="#" class="text-gray-600 hover:text-primary flex items-center gap-1">
         <div class="w-5 h-5 flex items-center justify-center">

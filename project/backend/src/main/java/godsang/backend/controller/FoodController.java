@@ -29,8 +29,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Log4j2
 @RequestMapping("/godsang/food")
-@CrossOrigin(origins = "http://localhost:5173")
-//@CrossOrigin(origins ="*")
+@CrossOrigin(origins = {"http://localhost:5173",
+        "http://dmualapvhwdg1.cloudfront.net",
+        "https://dmualapvhwdg1.cloudfront.net"})
 public class FoodController {
 
     private final FoodService foodService;

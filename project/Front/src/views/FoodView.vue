@@ -285,7 +285,7 @@ const calculatedNutrition = ref({
 })
 
 //배포 환경에서는 Nginx/ALB의 URL + API 경로 사용
-const API_BASE_URL = 'http://localhost:8080/godsang/food'
+const API_BASE_URL = 'http://my-alb-41050461.ap-northeast-2.elb.amazonaws.com/godsang/food'
 
 //검색결과 비동기적으로 가져옴
 const fetchSearchResults = async () => {
